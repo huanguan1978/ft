@@ -1,6 +1,3 @@
-[English](https://github.com/huanguan1978/ft/docs/en) | [Chinese
-](https://github.com/huanguan1978/ft/docs/zh)
-
 ## **ft: FileTools - High-Performance Cross-Platform File Management & Automation**
 
 **`ft` (FileTools) is a powerful command-line interface (CLI) tool designed for developers and advanced users, offering a high-performance, cross-platform solution for file management and task automation. Ditch cumbersome shell scripts and platform-specific challenges; `ft` empowers you to effortlessly manage your file workflows.**
@@ -28,13 +25,13 @@ Get started now and experience the power of `ft`'s cross-platform file managemen
 
 *   **Recommended (Instant Use):**
     [**Download pre-compiled binaries**](https://github.com/huanguan1978/ft/releases), then simply unzip and run.
-    *   **💡 Learn More:** Consult the [**Quick Start Guide**](https://github.com/huanguan1978/ft/docs/en/started.md) to understand `ft`'s wildcards, paths, regular expressions, argument values & quoting, and workflows.
+    *   **💡 Learn More:** Consult the [**Quick Start Guide**](started.md) to understand `ft`'s wildcards, paths, regular expressions, argument values & quoting, and workflows.
 
 *   **For Dart/Flutter Users:**
     `dart pub global activate ft`
 
 *   **Developer Integration:**
-    [**Integrate `ft`'s source library into your Dart/Flutter project**](https://github.com/huanguan1978/ft/docs/en/library.md).
+    [**Integrate `ft`'s source library into your Dart/Flutter project**](library.md).
 
 ### **Using `ft`**
 

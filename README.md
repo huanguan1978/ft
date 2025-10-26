@@ -1,5 +1,5 @@
-[English](https://github.com/huanguan1978/ft/docs/en) | [Chinese
-](https://github.com/huanguan1978/ft/docs/zh)
+[English](https://github.com/huanguan1978/ft/tree/main/docs/en) | [Chinese
+](https://github.com/huanguan1978/ft/tree/main/docs/zh)
 
 ## **ft: FileTools - High-Performance Cross-Platform File Management & Automation**
 
@@ -28,13 +28,13 @@ Get started now and experience the power of `ft`'s cross-platform file managemen
 
 *   **Recommended (Instant Use):**
     [**Download pre-compiled binaries**](https://github.com/huanguan1978/ft/releases), then simply unzip and run.
-    *   **💡 Learn More:** Consult the [**Quick Start Guide**](https://github.com/huanguan1978/ft/docs/en/started.md) to understand `ft`'s wildcards, paths, regular expressions, argument values & quoting, and workflows.
+    *   **💡 Learn More:** Consult the [**Quick Start Guide**](https://github.com/huanguan1978/ft/tree/main/docs/en/started.md) to understand `ft`'s wildcards, paths, regular expressions, argument values & quoting, and workflows.
 
 *   **For Dart/Flutter Users:**
     `dart pub global activate ft`
 
 *   **Developer Integration:**
-    [**Integrate `ft`'s source library into your Dart/Flutter project**](https://github.com/huanguan1978/ft/docs/en/library.md).
+    [**Integrate `ft`'s source library into your Dart/Flutter project**](https://github.com/huanguan1978/ft/tree/main/docs/en/library.md).
 
 ### **Using `ft`**
 
