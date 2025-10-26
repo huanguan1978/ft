@@ -456,7 +456,7 @@ class MirrorCommand extends Command {
     var toDir = Directory(target);
     final isWritable = isDirWritable(toDir);
     if (!isWritable) {
-      throw throw UsageException('err: not writable. $target', '');
+      throw UsageException('err: not writable. $target', '');
     }
 
     if (v) traceGlobalParam(logger, ftRun, source);
@@ -1318,9 +1318,14 @@ class ShellCommand extends Command {
         help: 'delay between blocks.',
       )
       ..addFlag(
-        'vai_shell',
+        'via_shell',
         defaultsTo: true,
         help: 'run script through the system shell',
+      )
+      ..addFlag(
+        'expand_path',
+        defaultsTo: true,
+        help: 'expand tilde (~) and resolve relative paths (., ..) in args.',
       )
       ..addFlag(
         'exit_on_nonzore',
@@ -1365,6 +1370,7 @@ class ShellCommand extends Command {
 
     late final String source;
     late final bool viaShell;
+    late final bool expandPath;
     late final bool exitOnNonzore;
     late final List<String> blocks;
     late final Map<String, List<String>> blockMap;
@@ -1386,7 +1392,9 @@ class ShellCommand extends Command {
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
 
-      viaShell = getFlag('$name.vai_shell', ftRun.ftConfig,
+      viaShell = getFlag('$name.via_shell', ftRun.ftConfig,
+          aRes: argResults, defaultTo: true);
+      expandPath = getFlag('$name.expand_path', ftRun.ftConfig,
           aRes: argResults, defaultTo: true);
       exitOnNonzore = getFlag('$name.exit_on_nonzore', ftRun.ftConfig,
           aRes: argResults, defaultTo: false);
@@ -1413,6 +1421,7 @@ class ShellCommand extends Command {
         ftRun,
         source, // workdir
         viaShell: viaShell,
+        expandPath: expandPath,
         exitOnNonzore: exitOnNonzore,
       );
 
@@ -1426,26 +1435,34 @@ class ShellCommand extends Command {
     FtRunner ftRun,
     String workdir, {
     bool viaShell = true,
+    bool expandPath = true,
     bool exitOnNonzore = true,
   }) {
-    var workenv = ftRun.ftDefine;
+    var workenv = ftRun.ftEnv;
     var logger = ftRun.ftLogger;
     // final lpm = LocalProcessManager();
     for (var cmd in commands) {
       logger.trace('i, block:$blockName, cmd:$cmd');
       cmd = expandVar(cmd.trim(), map: ftRun.ftEnv);
-      var progress = logger.progress('i, block:$blockName, run:$cmd');
 
       var parts = cmd.split(spaceDelimiter);
       var name = parts.first.trim();
       var args = parts.getRange(1, parts.length).toList();
+      if (expandPath) {
+        args = args.map((e) => expandTilde(e)).toList();
+        // logger.trace('i, expandPath, args:$args');
+      }
+
       var exec = name.toLowerCase();
+      var progress = logger.progress(
+          'i, block:$blockName, run:$name ${args.join(spaceDelimiter)} ');
+
       if (exec == 'cd') {
         if (args.isEmpty) {
-          workdir = expandTilde(r'~');
+          workdir = expandTilde('~');
         } else {
           var newdir = args.first.trim();
-          if (newdir.startsWith(r'~')) newdir = expandTilde(newdir);
+          if (newdir.startsWith('~')) newdir = expandTilde(newdir);
           workdir = p.normalize(newdir);
         }
         continue;

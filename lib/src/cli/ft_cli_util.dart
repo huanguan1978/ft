@@ -79,8 +79,8 @@ String getSource(
     throw UsageException('err: required source', '');
   }
 
-  if (source.trimLeft().startsWith('r~')) {
-    if (isWindows) source = source.replaceFirst(r'~', homePattern);
+  if (source.trimLeft().startsWith('~')) {
+    if (isWindows) source = source.replaceFirst('~', homePattern);
     source = expandTilde(source);
   }
 
@@ -89,7 +89,7 @@ String getSource(
   }
 
   if (source.contains(varInputRegexp)) {
-    throw throw UsageException('err: undef.var. $source', '');
+    throw UsageException('err: undef.var. $source', '');
   }
 
   // if (source.startsWith('.')) source = expandDotPath(source);
@@ -114,16 +114,16 @@ String getTarget(
   if (target == null || target.isEmpty) {
     throw UsageException('err: required $name', '');
   }
-  if ((target == r'.' || target == r'..') && orgiName.startsWith('archive')) {
+  if ((target == '.' || target == '..') && orgiName.startsWith('archive')) {
     target = p.basename(expandDotPath(target));
   }
   if (source != null && source == target) {
     throw UsageException('err: invalid $name', '');
   }
 
-  if (target.trimLeft().startsWith('r~')) {
-    if (isWindows) target = target.replaceFirst(r'~', homePattern);
-    source = expandTilde(target);
+  if (target.trimLeft().startsWith('~')) {
+    if (isWindows) target = target.replaceFirst('~', homePattern);
+    target = expandTilde(target);
   }
 
   if (target.contains(varInputRegexp) && env != null) {
@@ -131,7 +131,7 @@ String getTarget(
   }
 
   if (target.contains(varInputRegexp)) {
-    throw throw UsageException('err: undef.var. $target', '');
+    throw UsageException('err: undef.var. $target', '');
   }
 
   // if (target.startsWith('.')) target = expandDotPath(target);
