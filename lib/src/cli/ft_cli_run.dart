@@ -1268,7 +1268,12 @@ class ExecuteCommand extends Command {
         final progress = logger.progress('i, block:$block, run:$cmd');
 
         final parts = parseCliArgs(cmd);
-        final args = parts.getRange(1, parts.length).toList();
+        final args = parts
+            .getRange(1, parts.length)
+            .map((e) => e.trim())
+            .toList()
+          ..removeWhere((e) => e.isEmpty);
+
         final runner = cmdRunner(args);
 
         runner.run(args).catchError(
@@ -1447,7 +1452,8 @@ class ShellCommand extends Command {
 
       var parts = cmd.split(spaceDelimiter);
       var name = parts.first.trim();
-      var args = parts.getRange(1, parts.length).toList();
+      var args = parts.getRange(1, parts.length).map((e) => e.trim()).toList()
+        ..removeWhere((e) => e.isEmpty);
       if (expandPath) {
         args = args.map((e) => expandTilde(e)).toList();
         // logger.trace('i, expandPath, args:$args');
