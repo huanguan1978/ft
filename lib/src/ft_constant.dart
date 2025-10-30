@@ -3,7 +3,8 @@ part of '../ft.dart';
 /// A map of environment variables for the current process.
 ///
 /// Example: `{'PATH': '/usr/bin', 'HOME': '/home/username'}`
-final Map<String, String> environ = Platform.environment;
+final Map<String, String> environ =
+    Map<String, String>.from(Platform.environment);
 
 /// Delimiter: a single dot (`.`).
 const String dotDelimiter = r'.';

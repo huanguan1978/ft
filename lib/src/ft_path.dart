@@ -8,7 +8,8 @@ final RegExp varTimeAgoRegexp =
     RegExp(r'^(agodatetime|agodate)(\d+)(.+)$', caseSensitive: false);
 
 /// determine the user's home directory.
-final String homePath = environ['HOME'] ?? environ['USERPROFILE'] ?? '';
+// final String homePath = environ['HOME'] ?? environ['USERPROFILE'] ?? '';
+String get homePath => environ['HOME'] ?? environ['USERPROFILE'] ?? '';
 
 /// define the platform-specific home directory pattern
 final String homePattern = isWindows ? r'%USERPROFILE%' : r'~';
