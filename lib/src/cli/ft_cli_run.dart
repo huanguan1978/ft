@@ -1585,7 +1585,7 @@ FtRunner cmdRunner(List<String> args) {
     )
     ..addFlag(
       'errexit',
-      negatable: false,
+      negatable: true,
       defaultsTo: true,
       help: 'exit on error.',
     )

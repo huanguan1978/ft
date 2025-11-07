@@ -76,10 +76,10 @@ mixin BasicAction on PathMeta {
       cancelOnError: cancelOnError,
       onDone: () => logger.trace('d, $action, done.'),
       onError: (e, s) {
-        if (cancelOnError) exitCode = ExitCodeExt.error.code;
-        scEntity.close();
-        scFilted.close();
-        subs.cancel();
+        if (cancelOnError) {
+          exitCode = ExitCodeExt.error.code;
+          subs.cancel();
+        }
 
         logger
           ..trace('d, $action, cancelOnError:$cancelOnError')
@@ -211,10 +211,10 @@ mixin BasicAction on PathMeta {
       cancelOnError: cancelOnError,
       onDone: () => logger.trace('d, $action, done.'),
       onError: (e, s) {
-        if (cancelOnError) exitCode = ExitCodeExt.error.code;
-        scEntity.close();
-        scFilted.close();
-        subs.cancel();
+        if (cancelOnError) {
+          exitCode = ExitCodeExt.error.code;
+          subs.cancel();
+        }
 
         logger
           ..trace('d, $action, cancelOnError:$cancelOnError')
@@ -291,9 +291,10 @@ mixin BasicAction on PathMeta {
       cancelOnError: cancelOnError,
       onDone: () => logger.trace('d, $action, done.'),
       onError: (e, s) {
-        if (cancelOnError) exitCode = ExitCodeExt.error.code;
-        scEntity.close();
-        subs.cancel();
+        if (cancelOnError) {
+          exitCode = ExitCodeExt.error.code;
+          subs.cancel();
+        }
 
         logger
           ..trace('d, $action, cancelOnError:$cancelOnError')
@@ -420,9 +421,10 @@ mixin BasicAction on PathMeta {
         }
       },
       onError: (e, s) {
-        if (cancelOnError) exitCode = ExitCodeExt.error.code;
-        scEntity.close();
-        subs.cancel();
+        if (cancelOnError) {
+          exitCode = ExitCodeExt.error.code;
+          subs.cancel();
+        }
 
         logger
           ..trace('d, $action, cancelOnError:$cancelOnError')
@@ -466,9 +468,10 @@ mixin BasicAction on PathMeta {
       cancelOnError: cancelOnError,
       onDone: () => logger.trace('d, $action, done.'),
       onError: (e, s) {
-        if (cancelOnError) exitCode = ExitCodeExt.error.code;
-        scEntity.close();
-        subs.cancel();
+        if (cancelOnError) {
+          exitCode = ExitCodeExt.error.code;
+          subs.cancel();
+        }
 
         logger
           ..trace('d, $action, cancelOnError:$cancelOnError')
@@ -535,9 +538,10 @@ mixin BasicAction on PathMeta {
       cancelOnError: cancelOnError,
       onDone: () => logger.trace('d, $action, done.'),
       onError: (e, s) {
-        if (cancelOnError) exitCode = ExitCodeExt.error.code;
-        scEntity.close();
-        subs.cancel();
+        if (cancelOnError) {
+          exitCode = ExitCodeExt.error.code;
+          subs.cancel();
+        }
 
         logger
           ..trace('d, $action, cancelOnError:$cancelOnError')
@@ -638,10 +642,12 @@ mixin BasicAction on PathMeta {
         tarEntryController.close();
       },
       onError: (e, s) {
-        if (cancelOnError) exitCode = ExitCodeExt.error.code;
-        scEntity.close();
-        subs.cancel();
-        tarEntryController.close();
+        if (cancelOnError) {
+          tarEntryController.close();
+
+          exitCode = ExitCodeExt.error.code;
+          subs.cancel();
+        }
 
         logger
           ..trace('d, $action, cancelOnError:$cancelOnError')
@@ -718,9 +724,10 @@ mixin BasicAction on PathMeta {
       cancelOnError: cancelOnError,
       onDone: () => logger.trace('d, $action, done.'),
       onError: (e, s) {
-        if (cancelOnError) exitCode = ExitCodeExt.error.code;
-        scEntity.close();
-        subs.cancel();
+        if (cancelOnError) {
+          exitCode = ExitCodeExt.error.code;
+          subs.cancel();
+        }
 
         logger
           ..trace('d, $action, cancelOnError:$cancelOnError')

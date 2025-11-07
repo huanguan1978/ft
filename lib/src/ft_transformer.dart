@@ -23,28 +23,37 @@ class EntityStreamTransformer
 
   @override
   Stream<FileSystemEntity> bind(stream) {
-    final subs = stream.listen(
+    late StreamSubscription<FileSystemEntity> subs;
+    subs = stream.listen(
       (data) {
         // print(data);
         _transform(data);
       },
       onError: (e, s) {
+        // print('---error---, $e');
         _scEntity.addError(e, s);
         _scFilted.addError(e, s);
+        if (cancelOnError) {
+          // print('---error---,cancelOnError:$cancelOnError, cleanup.');
+          _scEntity.close();
+          _scFilted.close();
+          subs.cancel();
+        }
       },
       onDone: () {
+        // print('---done---');
         _scEntity.close();
         _scFilted.close();
       },
-      // cancelOnError: cancelOnError,
+      cancelOnError: cancelOnError,
     );
 
     if ((exitCode == ExitCodeExt.interrupt.code) ||
         (exitCode == ExitCodeExt.error.code)) {
       print('----exitCode:$exitCode---');
-      unawaited(subs.cancel());
       unawaited(_scEntity.close());
       unawaited(_scFilted.close());
+      unawaited(subs.cancel());
     }
     return stream;
   }
