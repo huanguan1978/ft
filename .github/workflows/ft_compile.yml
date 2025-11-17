@@ -1,0 +1,204 @@
+name: dart compile (ft)
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+  workflow_dispatch: 
+
+jobs:
+  build_on_mac_intel:
+    name: Build on macOS Intel
+    runs-on: macos-13
+
+    outputs:
+      app_version: ${{steps.get_version.outputs.app_version}} # export version alias app_version for other job
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+            sdk: stable
+ 
+      - run: dart pub get
+
+      - name: Get Project Version
+        id: get_version
+        run: |
+          APP_VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //g' | tr -d '[:space:]')
+          echo "Dart Project Version: $APP_VERSION"
+          echo "app_version=$APP_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Compile Dart Executable (Native platform)
+        run: |
+          EXECUTABLE_NAME="ft-${{steps.get_version.outputs.app_version}}-macos-x64"
+          mkdir -p build
+          dart compile exe bin/ft.dart -o build/$EXECUTABLE_NAME
+          echo "Compiled to build/$EXECUTABLE_NAME"
+
+      - name: Upload Dart Executable (Native platform)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft-macos-x64-${{steps.get_version.outputs.app_version}}
+          path: | 
+            build/ft-${{steps.get_version.outputs.app_version}}-macos-x64
+            LICENSE
+            CHANGELOG.md
+            README.md
+            doc/en/*.md
+            doc/zh/*.md
+
+  build_on_mac_arm:
+    name: Build on macOS Apple Silicon (ARM64)
+    runs-on: macos-latest
+    needs: build_on_mac_intel # use app_version
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+            sdk: stable
+ 
+      - run: dart pub get
+
+      - name: Get Project Version
+        id: get_version
+        run: |
+          echo "app_version=${{needs.build_on_mac_intel.outputs.app_version}}" >> "$GITHUB_OUTPUT"
+
+      - name: Compile Dart Executable (Native platform)
+        run: |
+          EXECUTABLE_NAME="ft-${{steps.get_version.outputs.app_version}}-macos-arm64"
+          mkdir -p build
+          dart compile exe bin/ft.dart -o build/$EXECUTABLE_NAME
+          echo "Compiled to build/$EXECUTABLE_NAME"
+
+      - name: Compile Dart Executable (Linux x86-64)
+        run: |
+          EXECUTABLE_NAME="ft-${{steps.get_version.outputs.app_version}}-linux-x64"
+          mkdir -p build
+          dart compile exe bin/ft.dart -o build/$EXECUTABLE_NAME --target-os=linux --target-arch=x64
+          echo "Compiled to build/$EXECUTABLE_NAME"
+
+      - name: Compile Dart Executable (Linux arm64)
+        run: |
+          EXECUTABLE_NAME="ft-${{steps.get_version.outputs.app_version}}-linux-arm64"
+          mkdir -p build
+          dart compile exe bin/ft.dart -o build/$EXECUTABLE_NAME --target-os=linux --target-arch=arm64
+          echo "Compiled to build/$EXECUTABLE_NAME"
+
+      - name: Compile Dart Executable (Linux arm32)
+        run: |
+          EXECUTABLE_NAME="ft-${{steps.get_version.outputs.app_version}}-linux-arm"
+          mkdir -p build
+          dart compile exe bin/ft.dart -o build/$EXECUTABLE_NAME --target-os=linux --target-arch=arm
+          echo "Compiled to build/$EXECUTABLE_NAME"
+
+      - name: Compile Dart Executable (Linux riscv64)
+        run: |
+          EXECUTABLE_NAME="ft-${{steps.get_version.outputs.app_version}}-linux-riscv64"
+          mkdir -p build
+          dart compile exe bin/ft.dart -o build/$EXECUTABLE_NAME --target-os=linux --target-arch=riscv64
+          echo "Compiled to build/$EXECUTABLE_NAME"          
+
+      - name: Upload Dart Executable (Native platform)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft-macos-arm64-${{steps.get_version.outputs.app_version}}
+          path: | 
+            build/ft-${{steps.get_version.outputs.app_version}}-macos-arm64
+            LICENSE
+            CHANGELOG.md
+            README.md
+            doc/en/*.md
+            doc/zh/*.md   
+
+      - name: Upload Dart Executable (Linux x86-64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft-linux-x64-${{steps.get_version.outputs.app_version}}
+          path: | 
+            build/ft-${{steps.get_version.outputs.app_version}}-linux-x64
+            LICENSE
+            CHANGELOG.md
+            README.md
+            doc/en/*.md
+            doc/zh/*.md
+
+      - name: Upload Dart Executable (Linux arm64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft-linux-arm64-${{steps.get_version.outputs.app_version}}
+          path: | 
+            build/ft-${{steps.get_version.outputs.app_version}}-linux-arm64
+            LICENSE
+            CHANGELOG.md
+            README.md
+            doc/en/*.md
+            doc/zh/*.md
+
+      - name: Upload Dart Executable (Linux arm32)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft-linux-arm32-${{steps.get_version.outputs.app_version}}
+          path: | 
+            build/ft-${{steps.get_version.outputs.app_version}}-linux-arm
+            LICENSE
+            CHANGELOG.md
+            README.md
+            doc/en/*.md
+            doc/zh/*.md
+
+      - name: Upload Dart Executable (Linux riscv64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft-linux-riscv64-${{steps.get_version.outputs.app_version}}
+          path: | 
+            build/ft-${{steps.get_version.outputs.app_version}}-linux-riscv64
+            LICENSE
+            CHANGELOG.md
+            README.md
+            doc/en/*.md
+            doc/zh/*.md
+
+  build_on_window_intel:
+    name: Build on Windows x64
+    runs-on: windows-latest
+    needs: build_on_mac_intel # use app_version
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+            sdk: stable
+ 
+      - run: dart pub get
+
+      - name: Get Project Version
+        id: get_version
+        shell: powershell
+        run: |
+            $app_version="${{needs.build_on_mac_intel.outputs.app_version}}"
+            echo "app_version=$app_version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8
+
+      - name: Compile Dart Executable (Native platform)
+        shell: powershell      
+        run: |
+          $EXECUTABLE_NAME="ft-${{steps.get_version.outputs.app_version}}-windows-x64.exe"
+          mkdir -p build
+          dart compile exe bin/ft.dart -o "build/$EXECUTABLE_NAME"
+          echo "Compiled to build/$EXECUTABLE_NAME"
+
+      - name: Upload Dart Executable (Native platform)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft-windows-x64-${{steps.get_version.outputs.app_version}}
+          path: | 
+            build/ft-${{steps.get_version.outputs.app_version}}-windows-x64.exe
+            LICENSE
+            CHANGELOG.md
+            README.md
+            doc/en/*.md
+            doc/zh/*.md
