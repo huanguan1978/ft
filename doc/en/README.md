@@ -28,7 +28,7 @@ Get started now and experience the power of `ft`'s cross-platform file managemen
     *   **💡 Learn More:** Consult the [**Quick Start Guide**](started.md) to understand `ft`'s wildcards, paths, regular expressions, argument values & quoting, and workflows.
 
 *   **For Dart/Flutter Users:**
-    `dart pub global activate ft`
+    `dart pub global activate --executable=ft filetools`
 
 *   **Developer Integration:**
     [**Integrate `ft`'s source library into your Dart/Flutter project**](library.md).

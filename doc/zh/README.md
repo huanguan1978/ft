@@ -29,7 +29,7 @@
     *   **💡 探索更多：** 查阅 [**快速上手简明手册**](started.md) 了解 `ft` 的通配符、路径、正则表达式、参数值与引号，以及工作流程。
 
 *   **Dart/Flutter 用户：**
-    `dart pub global activate ft`
+    `dart pub global activate --executable=ft filetools`
 
 *   **开发者（集成）：**
     [**集成 `ft` 源代码库到您的 Dart/Flutter 项目**](library.md)。
