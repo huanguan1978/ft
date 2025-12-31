@@ -159,7 +159,9 @@ mixin BasicAction on PathMeta {
           var no = 0; // lineNumber
           final location = compressTilde(entity.path);
           final file = File.fromUri(entity.uri);
-          var tStream = file.openRead().transform(utf8.decoder);
+          var tStream = file
+              .openRead()
+              .transform(Utf8Codec(allowMalformed: true).decoder);
           if (lineByLine) tStream = tStream.transform(const LineSplitter());
 
           late StreamSubscription tSubs;
