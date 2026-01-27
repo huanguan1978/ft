@@ -11,7 +11,7 @@ on:
 jobs:
   build_on_mac_intel:
     name: Build on macOS Intel
-    runs-on: macos-13
+    runs-on: macos-15
 
     outputs:
       app_version: ${{steps.get_version.outputs.app_version}} # export version alias app_version for other job
