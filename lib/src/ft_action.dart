@@ -116,6 +116,8 @@ mixin BasicAction on PathMeta {
     bool reS = false,
     bool reM = false,
     bool lineByLine = true, // is LineSplitter
+    bool lineNum = true, // show line number
+    bool onlyGroups = false, // output groups only
   }) {
     final action = PathAction.search.name, chk = 'validator';
     argErr ??= validator();
@@ -150,7 +152,7 @@ mixin BasicAction on PathMeta {
         extra += ' isTextFile:${isText ? 1 : 0}';
         final line =
             Formatter(entity, stat, extra, action, shows: fields, ok: isText);
-        logger.stdout(line.toString());
+        if (!onlyGroups) logger.stdout(line.toString());
 
         if (ok && isText) {
           final buf = StringBuffer();
@@ -168,18 +170,31 @@ mixin BasicAction on PathMeta {
           tSubs = tStream.listen(
             (line) {
               no++;
-              if (regex.hasMatch(line)) {
-                // line.contains(regex)
-                if (replace.isNotEmpty) {
-                  replaced = true;
-                  line = line.replaceAll(regex, replace);
-                  logger.stdout('i, L:$no, O:$line, F:$location');
-                } else {
-                  logger.stdout(
-                      'i, L:$no, I:${lineByLine ? line : '......'}, F:$location');
+              if (onlyGroups) {
+                final matches = regex.allMatches(line);
+                if (matches.isNotEmpty) {
+                  for (var match in matches) {
+                    final n = match.groupCount + 1;
+                    final indices = List.generate(n, (i) => i)..removeAt(0);
+                    final groups = match.groups(indices);
+                    final message = lineNum ? 'i, L:$no, $groups' : '$groups';
+                    logger.stdout(message);
+                  }
                 }
+              } else {
+                if (regex.hasMatch(line)) {
+                  // line.contains(regex)
+                  if (replace.isNotEmpty) {
+                    replaced = true;
+                    line = line.replaceAll(regex, replace);
+                    logger.stdout('i, L:$no, O:$line, F:$location');
+                  } else {
+                    logger.stdout(
+                        'i, L:$no, I:${lineByLine ? line : '......'}, F:$location');
+                  }
+                }
+                if (replace.isNotEmpty) buf.writeln(line);
               }
-              if (replace.isNotEmpty) buf.writeln(line);
             },
             cancelOnError: cancelOnError,
             onDone: () {

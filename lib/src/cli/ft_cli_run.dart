@@ -189,7 +189,9 @@ class SearchCommand extends Command {
       "e.g. search CWD, yaml files, vesion 1.0.0 replace to 1.0.1 \n"
       "  ft search . --pattern='**.yaml' --regexp='version: 1.0.0' --replace='version: 1.0.1' \n\n"
       "e.g. search CWD, html files, <div id=\"helloworld\">...</div> \n"
-      "  ft search . --pattern='**.{htm,html}' --regexp='<div id=\"helloworld\">.*?<\\/div>' --no-linebyline --res";
+      "  ft search . --pattern='**.{htm,html}' --regexp='<div id=\"helloworld\">.*?<\\/div>' --no-linebyline --res \n\n"
+      "e.g. search apache access log, output remote_addr, access_time, use onlygroups \n"
+      "  ft search /var/log/httpd/ --pattern='**.log' --regexp='(.*) - - \\[(.*)\\]' --onlygroups ";
 
   SearchCommand() {
     argParser
@@ -200,13 +202,25 @@ class SearchCommand extends Command {
       )
       ..addMultiOption(
         'extmime',
-        help: "ext mime for search (e.g. --extmine='yaml=text/yaml')",
+        help: "ext mime for search (e.g. --extmime='yaml=text/yaml')",
       )
       ..addFlag(
         'linebyline',
         negatable: true,
         defaultsTo: true,
         help: 'line by line file processing',
+      )
+      ..addFlag(
+        'linenum',
+        negatable: true,
+        defaultsTo: true,
+        help: 'linenum output',
+      )
+      ..addFlag(
+        'onlygroups',
+        negatable: true,
+        defaultsTo: false,
+        help: 'only groups output',
       )
       ..addFlag(
         'esc',
@@ -268,6 +282,8 @@ class SearchCommand extends Command {
     late final bool res;
     late final bool rem;
     late final bool linebyline;
+    late final bool onlygroups;
+    late final bool linenum;
     late final bool esc;
     late final List<String> mimeexts;
     try {
@@ -305,6 +321,10 @@ class SearchCommand extends Command {
 
       esc = getFlag('$name.esc', ftRun.ftConfig, aRes: argResults);
       linebyline = getFlag('$name.linebyline', ftRun.ftConfig,
+          aRes: argResults, defaultTo: true);
+      onlygroups = getFlag('$name.onlygroups', ftRun.ftConfig,
+          aRes: argResults, defaultTo: false);
+      linenum = getFlag('$name.linenum', ftRun.ftConfig,
           aRes: argResults, defaultTo: true);
 
       mimeexts = getOpitons('$name.extmime', ftRun.ftConfig, aRes: argResults);
@@ -350,6 +370,8 @@ class SearchCommand extends Command {
       replace: replace,
       extMime: mimeext,
       lineByLine: linebyline,
+      onlyGroups: onlygroups,
+      lineNum: linenum,
       reI: rei,
       reU: reu,
       reM: rem,
