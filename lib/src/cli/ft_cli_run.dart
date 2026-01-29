@@ -1323,8 +1323,8 @@ class ShellCommand extends Command {
   final description =
       "execute script blocks defined in `--config`, using `--source` as the working directory.  \n\n"
       "e.g. generate a custom config on current directory. \n"
-      "  ft --config-gen \n"
-      "  ft --config=ft.yaml --config-gen \n\n"
+      "  ft --config_gen \n"
+      "  ft --config=ft.yaml --config_gen \n\n"
       "e.g. run scripts (default block) in current directory.  \n"
       "  ft shell . --config=ft.yaml \n\n"
       "e.g. run scripts (use blocks in order) in current directory.  \n"
