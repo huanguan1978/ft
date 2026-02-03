@@ -1347,7 +1347,12 @@ class ShellCommand extends Command {
       ..addFlag(
         'via_shell',
         defaultsTo: true,
-        help: 'run script through the system shell',
+        help: 'run script through the system shell.',
+      )
+      ..addFlag(
+        'keep_quotes',
+        defaultsTo: false,
+        help: 'keep quotes in script arguments.',
       )
       ..addFlag(
         'expand_path',
@@ -1357,7 +1362,7 @@ class ShellCommand extends Command {
       ..addFlag(
         'exit_on_nonzore',
         defaultsTo: false,
-        help: 'exit on non-zero exit code',
+        help: 'exit on non-zero exit code.',
       );
   }
 
@@ -1397,6 +1402,7 @@ class ShellCommand extends Command {
 
     late final String source;
     late final bool viaShell;
+    late final bool keepQuotes;
     late final bool expandPath;
     late final bool exitOnNonzore;
     late final List<String> blocks;
@@ -1421,6 +1427,8 @@ class ShellCommand extends Command {
 
       viaShell = getFlag('$name.via_shell', ftRun.ftConfig,
           aRes: argResults, defaultTo: true);
+      keepQuotes = getFlag('$name.keep_quotes', ftRun.ftConfig,
+          aRes: argResults, defaultTo: false);
       expandPath = getFlag('$name.expand_path', ftRun.ftConfig,
           aRes: argResults, defaultTo: true);
       exitOnNonzore = getFlag('$name.exit_on_nonzore', ftRun.ftConfig,
@@ -1448,6 +1456,7 @@ class ShellCommand extends Command {
         ftRun,
         source, // workdir
         viaShell: viaShell,
+        keepQuotes: keepQuotes,
         expandPath: expandPath,
         exitOnNonzore: exitOnNonzore,
       );
@@ -1462,6 +1471,7 @@ class ShellCommand extends Command {
     FtRunner ftRun,
     String workdir, {
     bool viaShell = true,
+    bool keepQuotes = false,
     bool expandPath = true,
     bool exitOnNonzore = true,
   }) {
@@ -1479,6 +1489,10 @@ class ShellCommand extends Command {
       if (expandPath) {
         args = args.map((e) => expandTilde(e)).toList();
         // logger.trace('i, expandPath, args:$args');
+      }
+      if (!keepQuotes) {
+        args = args.map((e) => e.replaceAll('"', '')).toList();
+        args = args.map((e) => e.replaceAll("'", "")).toList();
       }
 
       var exec = name.toLowerCase();
