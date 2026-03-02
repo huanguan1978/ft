@@ -11,11 +11,21 @@ class EntityStreamTransformer
   final List<DateTime>? times;
   final StatTimeType statTimeType;
 
+  final List<String>? mimeOverrides;
+  final List<String>? mimeIncludes;
+  final List<String>? mimeExcludes;
+
+  late bool useMimeIncludes = false;
+  late bool useMimeExcludes = false;
+
   EntityStreamTransformer(
     this._scEntity,
     this._scFilted, {
     this.cancelOnError = false,
     this.excludes,
+    this.mimeOverrides,
+    this.mimeIncludes,
+    this.mimeExcludes,
     this.sizes,
     this.times,
     this.statTimeType = StatTimeType.modified,
@@ -23,6 +33,20 @@ class EntityStreamTransformer
 
   @override
   Stream<FileSystemEntity> bind(stream) {
+    mimetypeResolver = MimeTypeResolver();
+    if (mimeIncludes case List<String> s when s.isNotEmpty) {
+      useMimeIncludes = true;
+    }
+    if (mimeExcludes case List<String> s when s.isNotEmpty) {
+      useMimeExcludes = true;
+    }
+    if (useMimeIncludes || useMimeExcludes) {
+      final map = parseAssigns(mimeOverrides ?? []);
+      if (map.isNotEmpty) {
+        map.forEach((k, v) => mimetypeResolver.addExtension(k, v));
+      }
+    }
+
     late StreamSubscription<FileSystemEntity> subs;
     subs = stream.listen(
       (data) {
@@ -50,7 +74,7 @@ class EntityStreamTransformer
 
     if ((exitCode == ExitCodeExt.interrupt.code) ||
         (exitCode == ExitCodeExt.error.code)) {
-      print('----exitCode:$exitCode---');
+      // print('----exitCode:$exitCode---');
       unawaited(_scEntity.close());
       unawaited(_scFilted.close());
       unawaited(subs.cancel());
@@ -61,6 +85,7 @@ class EntityStreamTransformer
   (FileSystemEntity, FileStat) _transform(FileSystemEntity entity) {
     final isInExcludes_ = _isInExcludes(entity.path);
     final isExclude = isInExcludes_.$1;
+
     final stat = entity.statSync();
     final isInSizes_ = _isInSizes(stat.size);
 
@@ -74,17 +99,35 @@ class EntityStreamTransformer
 
     String extra = '';
     bool isFilted = false;
+
     if (!isFilted && !isInTimes_) {
-      extra = '_isNotInTimes_, $times, ${statTimeType.name}:$statTime';
+      extra = '_isNotInTimes_(${statTimeType.name}:$statTime)';
       isFilted = true;
     }
     if (!isFilted && !isInSizes_) {
-      extra = '_isNotInSizes_, $sizes, size:${stat.size}';
+      extra = '_isNotInSizes_(${stat.size})';
       isFilted = true;
     }
     if (!isFilted && isExclude) {
-      extra = '_isInExcludes_, ${isInExcludes_.$2}';
+      extra = '_isInExcludes_(${isInExcludes_.$2})';
       isFilted = true;
+    }
+
+    final mimetype = lookupMimeType(entity.path) ?? '';
+    if (useMimeIncludes) {
+      final isMimeExcludes = _isMimeExcludes(mimetype);
+      if (!isFilted && isMimeExcludes.$1) {
+        extra = '_isInMimeExcludes_(${isMimeExcludes.$2})';
+        isFilted = true;
+      }
+    }
+
+    if (!isFilted && useMimeIncludes) {
+      final isMimeIncludes = _isMimeIncludes(mimetype);
+      if (!isMimeIncludes.$1) {
+        extra = '_isNotInMimeIncludes_(${isMimeIncludes.$2})';
+        isFilted = true;
+      }
     }
 
     final es = Es((entity, stat, extra));
@@ -103,6 +146,29 @@ class EntityStreamTransformer
         if (isMatchGlob(pattern, path)) return (true, pattern);
       }
     }
+    return (false, '');
+  }
+
+  (bool, String) _isMimeIncludes(String mimetype) {
+    if (mimetype.isEmpty) return (false, mimetype);
+    if (useMimeIncludes) {
+      final parts = mimeIncludes ?? [];
+      for (var part in parts) {
+        if (mimetype.contains(part)) return (true, part);
+      }
+    }
+    return (false, mimetype);
+  }
+
+  (bool, String) _isMimeExcludes(String mimetype) {
+    if (mimetype.isEmpty) return (false, mimetype);
+    if (useMimeExcludes) {
+      final parts = mimeExcludes ?? [];
+      for (var part in parts) {
+        if (mimetype.contains(part)) return (true, part);
+      }
+    }
+
     return (false, '');
   }
 

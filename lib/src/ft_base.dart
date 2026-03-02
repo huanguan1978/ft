@@ -41,6 +41,9 @@ class PathMeta {
   String os;
   String pattern;
   List<String> excludes;
+  List<String> mimeOverrides;
+  List<String> mimeIncludes;
+  List<String> mimeExcludes;
   List<int> sizes; // sizeRange(begin, end)
   List<DateTime> times; // timeRange(begin, end)
   Map<String, String> env;
@@ -65,6 +68,9 @@ class PathMeta {
     String location, {
     this.pattern = r'**',
     this.excludes = const [],
+    this.mimeOverrides = const [],
+    this.mimeIncludes = const [],
+    this.mimeExcludes = const [],
     this.sizes = const [],
     this.times = const [],
     this.env = const {},
@@ -110,6 +116,9 @@ class PathMeta {
               scFilted,
               cancelOnError: cancelOnError,
               excludes: excludes,
+              mimeOverrides: mimeOverrides,
+              mimeIncludes: mimeIncludes,
+              mimeExcludes: mimeExcludes,
               sizes: sizes,
               times: times,
             ),

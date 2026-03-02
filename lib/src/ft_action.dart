@@ -24,6 +24,9 @@ class BasicPathAction extends PathMeta with BasicAction {
     super.location, {
     super.pattern,
     super.excludes,
+    super.mimeOverrides,
+    super.mimeIncludes,
+    super.mimeExcludes,
     super.sizes,
     super.times,
     super.env,
@@ -94,7 +97,6 @@ mixin BasicAction on PathMeta {
   ///
   /// - [regexp]: regex pattern.
   /// - [replace]: regexp has match to replace if replace.isNoEmpty.
-  /// - [extMime]: addon text file type, use mimetype, e.g. {'tml':'text/toml', 'yml':'application/yaml'}.
   /// - [lineByLine]: use line by line file processing?
 
   ///
@@ -110,7 +112,6 @@ mixin BasicAction on PathMeta {
   Stream<Es> search(
     String regexp, {
     String replace = '',
-    Map<String, String> extMime = const {},
     bool reI = false, // Case-insensitive
     bool reU = false,
     bool reS = false,
@@ -132,7 +133,6 @@ mixin BasicAction on PathMeta {
         stream.where((event) => event.fs.type == fseType).asBroadcastStream();
 
     doTextMimeInit(); // use for isTextMimeType
-    if (extMime.isNotEmpty) extMime.forEach((k, v) => doTextMimeAdd(k, v));
 
     // logger.stdout('d, regexp:$regexp, utf8.encode:${utf8.encode(regexp)}');
     final regex = RegExp(
