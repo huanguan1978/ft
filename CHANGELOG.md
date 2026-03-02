@@ -1,3 +1,9 @@
+## 1.0.4
+
+- Feat: Introduced MIME-type filtering (`--mime_includes`, `--mime_excludes`) and custom MIME mapping (`--mime_overrides`).
+- Docs: New guide `T5-MIMETYPE-Filtering` added to the documentation with detailed usage and examples.
+
+
 ## 1.0.3
 
 - Shell: fixed, Unlike shell execution, `Process.runSync` passes arguments literally, meaning quotes are not automatically stripped.

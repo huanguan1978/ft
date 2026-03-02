@@ -72,6 +72,8 @@ class ListCommand extends Command {
       "e.g. list CWD, all *.md, use variable name. \n"
       r"  ft list '\$CURDIR' --pattern='$mdfiles' --define='mdfiles=**.md'"
       "\n\n"
+      "e.g. list CWD, all *.md, use mimetype. \n"
+      "  ft list . --mime_includes='text/markdown' -v \n\n"
       "e.g. list CWD, excluding hiddens, verbose, pretty output. \n"
       "  ft list . --excludes='/**/.**' --fields=ok,action,type,perm,time,size -v \n\n"
       "e.g. list CWD, only hiddens, verbose output, show extra. \n"
@@ -153,6 +155,9 @@ class ListCommand extends Command {
       source,
       pattern: ftRun.ftPattern,
       excludes: ftRun.ftExcludes,
+      mimeOverrides: ftRun.ftMimeOverrides,
+      mimeIncludes: ftRun.ftMimeIncludes,
+      mimeExcludes: ftRun.ftMimeExcludes,
       sizes: ftRun.ftSizes,
       times: ftRun.ftTimes,
       env: ftRun.ftEnv,
@@ -324,6 +329,9 @@ class SearchCommand extends Command {
       source,
       pattern: ftRun.ftPattern,
       excludes: ftRun.ftExcludes,
+      mimeOverrides: ftRun.ftMimeOverrides,
+      mimeIncludes: ftRun.ftMimeIncludes,
+      mimeExcludes: ftRun.ftMimeExcludes,
       sizes: ftRun.ftSizes,
       times: ftRun.ftTimes,
       env: ftRun.ftEnv,
@@ -447,6 +455,9 @@ class MirrorCommand extends Command {
       source,
       pattern: ftRun.ftPattern,
       excludes: ftRun.ftExcludes,
+      mimeOverrides: ftRun.ftMimeOverrides,
+      mimeIncludes: ftRun.ftMimeIncludes,
+      mimeExcludes: ftRun.ftMimeExcludes,
       sizes: ftRun.ftSizes,
       times: ftRun.ftTimes,
       env: ftRun.ftEnv,
@@ -529,6 +540,9 @@ class CleanCommand extends Command {
       source,
       pattern: ftRun.ftPattern,
       excludes: ftRun.ftExcludes,
+      mimeOverrides: ftRun.ftMimeOverrides,
+      mimeIncludes: ftRun.ftMimeIncludes,
+      mimeExcludes: ftRun.ftMimeExcludes,
       sizes: ftRun.ftSizes,
       times: ftRun.ftTimes,
       env: ftRun.ftEnv,
@@ -618,6 +632,9 @@ class WipeCommand extends Command {
       source,
       pattern: ftRun.ftPattern,
       excludes: ftRun.ftExcludes,
+      mimeOverrides: ftRun.ftMimeOverrides,
+      mimeIncludes: ftRun.ftMimeIncludes,
+      mimeExcludes: ftRun.ftMimeExcludes,
       sizes: ftRun.ftSizes,
       times: ftRun.ftTimes,
       env: ftRun.ftEnv,
@@ -711,6 +728,9 @@ class RmDirCommand extends Command {
       source,
       pattern: ftRun.ftPattern,
       excludes: ftRun.ftExcludes,
+      mimeOverrides: ftRun.ftMimeOverrides,
+      mimeIncludes: ftRun.ftMimeIncludes,
+      mimeExcludes: ftRun.ftMimeExcludes,
       sizes: ftRun.ftSizes,
       times: ftRun.ftTimes,
       env: ftRun.ftEnv,
@@ -778,6 +798,9 @@ class FdupsCommand extends Command {
       source,
       pattern: ftRun.ftPattern,
       excludes: ftRun.ftExcludes,
+      mimeOverrides: ftRun.ftMimeOverrides,
+      mimeIncludes: ftRun.ftMimeIncludes,
+      mimeExcludes: ftRun.ftMimeExcludes,
       sizes: ftRun.ftSizes,
       times: ftRun.ftTimes,
       env: ftRun.ftEnv,
@@ -893,6 +916,9 @@ class ArchiveCommand extends Command {
       source,
       pattern: ftRun.ftPattern,
       excludes: ftRun.ftExcludes,
+      mimeOverrides: ftRun.ftMimeOverrides,
+      mimeIncludes: ftRun.ftMimeIncludes,
+      mimeExcludes: ftRun.ftMimeExcludes,
       sizes: ftRun.ftSizes,
       times: ftRun.ftTimes,
       env: ftRun.ftEnv,
@@ -1013,6 +1039,9 @@ class UnArchiveCommand extends Command {
       source,
       pattern: ftRun.ftPattern,
       excludes: ftRun.ftExcludes,
+      mimeOverrides: ftRun.ftMimeOverrides,
+      mimeIncludes: ftRun.ftMimeIncludes,
+      mimeExcludes: ftRun.ftMimeExcludes,
       sizes: ftRun.ftSizes,
       times: ftRun.ftTimes,
       env: ftRun.ftEnv,
@@ -1398,6 +1427,9 @@ class FtRunner<T> extends CommandRunner<T> {
   late final List<DateTime> ftTimes;
   late final String ftPattern;
   late final List<String> ftExcludes;
+  late final List<String> ftMimeOverrides;
+  late final List<String> ftMimeIncludes;
+  late final List<String> ftMimeExcludes;
   late final List<String> ftFields;
   late final Map<String, String> ftDefine, ftEnv;
   late final String ftTimeType;
@@ -1472,6 +1504,20 @@ FtRunner cmdRunner(List<String> args) {
     ..addMultiOption(
       'fields',
       help: "show fields (ok, action, type, mime, perm, time, size, extra)",
+    )
+    ..addMultiOption(
+      'mime_overrides',
+      help:
+          "Override or add MIME types (e.g. 'tml=text/toml,toml=application/toml')",
+    )
+    ..addMultiOption(
+      'mime_includes',
+      help:
+          "Filter by MIME types or subtypes (e.g. 'text/markdown,text,markdown')",
+    )
+    ..addMultiOption(
+      'mime_excludes',
+      help: "Exclude specific types or subtypes (e.g. 'application/zip,zip')",
     )
     ..addOption(
       'size_le',
