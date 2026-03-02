@@ -98,13 +98,16 @@ Global options:
     --config=<file>               Loads a config file for variable referencing
     --config_txt=<yaml>           Loads a yaml text for variable referencing
     --config_gen                  Generate a custom config on curdir.
-    --errexit                     exit on error.
+    --[no-]errexit                exit on error.
                                   (defaults to on)
     --define                      Define or override a variable from command line
     --pattern                     Glob pattern
                                   (defaults to "**")
     --excludes                    Glob pattern after exclusion (e.g. --excludes='.**')
     --fields                      show fields (ok, action, type, mime, perm, time, size, extra)
+    --mime_overrides              Override or add MIME types (e.g. 'tml=text/toml,toml=application/toml')
+    --mime_includes               Filter by MIME types or subtypes (e.g. 'text/markdown,text,markdown')
+    --mime_excludes               Exclude specific types or subtypes (e.g. 'application/zip,zip')
     --size_le                     file size less than (in bytes, unit:B|K|M|G|T|P)
     --size_ge                     file size greater than (in bytes, unit:B|K|M|G|T|P)
     --time_le                     file time before (yyyyMMddTHHmmss | yyyyMMdd)
