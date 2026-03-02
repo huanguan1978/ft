@@ -65,7 +65,7 @@ class Formatter {
       };
 
   /// fromat mime
-  String get mimeString => lookupMimeType(entity.path) ?? '';
+  String get mimeString => mimetypeResolver.lookup(entity.path) ?? '';
 
   /// format mode
   String get modeString {

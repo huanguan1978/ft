@@ -113,7 +113,11 @@ class EntityStreamTransformer
       isFilted = true;
     }
 
-    final mimetype = lookupMimeType(entity.path) ?? '';
+    // final mimetype = lookupMimeType(entity.path) ?? '';
+    final mimetype = (useMimeIncludes || useMimeExcludes)
+        ? mimetypeResolver.lookup(entity.path) ?? ''
+        : '';
+
     if (useMimeIncludes) {
       final isMimeExcludes = _isMimeExcludes(mimetype);
       if (!isFilted && isMimeExcludes.$1) {
