@@ -14,7 +14,7 @@ import 'package:glob/src/utils.dart';
 import 'package:glob/list_local_fs.dart';
 import 'package:glob/glob.dart';
 
-import 'package:mime/mime.dart' show lookupMimeType, MimeTypeResolver;
+import 'package:mime/mime.dart' show MimeTypeResolver;
 import 'package:path/path.dart' as p;
 import 'package:cli_util/cli_logging.dart';
 import 'package:tar/tar.dart';
