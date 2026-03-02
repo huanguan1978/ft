@@ -18,8 +18,37 @@ extension CommandExtension on Command {
   // cls_lastline
 }
 
-void traceGlobalParam(Logger logger, FtRunner ftRun, String source) {
+FtRunner _setFtRunner(FtRunner runner, ArgResults? globalResults) {
+  final args = globalResults?.arguments ?? [];
+
+  final config = configFromArgParse(runner.argParser, args);
+  final define = getDefine(config, globalResults);
+  final env = {...Platform.environment, ...define};
+
+  return runner
+    ..ftConfig = config
+    ..ftDefine = define
+    ..ftEnv = env
+    ..ftPattern = getOpiton('pattern', config, gRes: globalResults)
+    ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
+    ..ftFields =
+        getOpitons('fields', config, gRes: globalResults, datalist: fieldNames)
+    ..ftMimeOverrides =
+        getOpitons('mime_overrides', config, gRes: globalResults)
+    ..ftMimeIncludes = getOpitons('mime_includes', config, gRes: globalResults)
+    ..ftMimeExcludes = getOpitons('mime_excludes', config, gRes: globalResults)
+    ..ftSizes = getSizes(config, globalResults)
+    ..ftTimes = getTimes(config, globalResults)
+    ..ftErrExit =
+        getFlag('errexit', config, defaultTo: true, gRes: globalResults)
+    ..ftTimeType = getOpiton('time_type', runner.ftConfig,
+        gRes: globalResults, defaultTo: timeTypeDefault, datalist: timeTypes);
+}
+
+void _traceGlobalParam(Logger logger, FtRunner ftRun, String source) {
   logger.trace('i, pattern:${ftRun.ftPattern}, excludes:${ftRun.ftExcludes}');
+  logger.trace(
+      'i, mime, includes:${ftRun.ftMimeIncludes}, excludes:${ftRun.ftMimeExcludes}, overrides:${ftRun.ftMimeOverrides}');
   if (ftRun.ftFields.contains(FormatField.time.name)) {
     logger.trace('i, time_type:${ftRun.ftTimeType}');
   }
@@ -103,27 +132,7 @@ class ListCommand extends Command {
     late final String type;
     late final bool matched;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final env = {...Platform.environment, ...define};
-
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftPattern = getOpiton('pattern', config, gRes: globalResults)
-        ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
-        ..ftFields = getOpitons('fields', config,
-            gRes: globalResults, datalist: fieldNames)
-        ..ftSizes = getSizes(config, globalResults)
-        ..ftTimes = getTimes(config, globalResults)
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults)
-        ..ftTimeType = getOpiton('time_type', ftRun.ftConfig,
-            gRes: globalResults,
-            defaultTo: timeTypeDefault,
-            datalist: timeTypes);
+      _setFtRunner(ftRun, globalResults);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -139,7 +148,7 @@ class ListCommand extends Command {
       throw UsageException(e.toString(), '');
     }
 
-    if (v) traceGlobalParam(logger, ftRun, source);
+    if (v) _traceGlobalParam(logger, ftRun, source);
     final action = BasicPathAction(
       source,
       pattern: ftRun.ftPattern,
@@ -184,8 +193,8 @@ class SearchCommand extends Command {
       "  ft search . --pattern='**.yaml' --regexp='version: 1.0.0' \n\n"
       "e.g. search CWD, yaml files, with vesion: 1.0.\\d+, use regex pattern, enable escape \n"
       "  ft search . --pattern='**.yaml' --regexp='version: 1.0.\\d+' --escape \n\n"
-      "e.g. search CWD, toml files, with vesion: 1.0.0, use extmime. \n"
-      "  ft search . --pattern='**.{tml,toml}' --regexp='version: 1.0.0' --extmime='tml=text/toml,toml=application/toml' \n\n"
+      "e.g. search CWD, toml files, with vesion: 1.0.0, use mime_overrides. \n"
+      "  ft search . --pattern='**.{tml,toml}' --regexp='version: 1.0.0' --mime_overrides='tml=text/toml,toml=application/toml' \n\n"
       "e.g. search CWD, yaml files, vesion 1.0.0 replace to 1.0.1 \n"
       "  ft search . --pattern='**.yaml' --regexp='version: 1.0.0' --replace='version: 1.0.1' \n\n"
       "e.g. search CWD, html files, <div id=\"helloworld\">...</div> \n"
@@ -199,10 +208,6 @@ class SearchCommand extends Command {
         'regexp',
         valueHelp: 'pattern',
         help: 'regex pattern',
-      )
-      ..addMultiOption(
-        'extmime',
-        help: "ext mime for search (e.g. --extmime='yaml=text/yaml')",
       )
       ..addFlag(
         'linebyline',
@@ -285,28 +290,8 @@ class SearchCommand extends Command {
     late final bool onlygroups;
     late final bool linenum;
     late final bool esc;
-    late final List<String> mimeexts;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final env = {...Platform.environment, ...define};
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftPattern = getOpiton('pattern', config, gRes: globalResults)
-        ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
-        ..ftFields = getOpitons('fields', config,
-            gRes: globalResults, datalist: fieldNames)
-        ..ftSizes = getSizes(config, globalResults)
-        ..ftTimes = getTimes(config, globalResults)
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults)
-        ..ftTimeType = getOpiton('time_type', ftRun.ftConfig,
-            gRes: globalResults,
-            defaultTo: timeTypeDefault,
-            datalist: timeTypes);
+      _setFtRunner(ftRun, globalResults);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -326,8 +311,6 @@ class SearchCommand extends Command {
           aRes: argResults, defaultTo: false);
       linenum = getFlag('$name.linenum', ftRun.ftConfig,
           aRes: argResults, defaultTo: true);
-
-      mimeexts = getOpitons('$name.extmime', ftRun.ftConfig, aRes: argResults);
     } on UsageException catch (e, s) {
       logger.stderr('e, $name.run, $e\n $s');
       rethrow;
@@ -336,7 +319,7 @@ class SearchCommand extends Command {
       throw UsageException(e.toString(), '');
     }
 
-    if (v) traceGlobalParam(logger, ftRun, source);
+    if (v) _traceGlobalParam(logger, ftRun, source);
     final action = BasicPathAction(
       source,
       pattern: ftRun.ftPattern,
@@ -359,16 +342,13 @@ class SearchCommand extends Command {
     if (v) {
       logger
         ..trace(
-            'i, regexp:$regexp, replace:$replace, linebyline:$linebyline, rei:$rei,reu:$reu,rem:$rem,res:$res. extmime:$mimeexts')
+            'i, regexp:$regexp, replace:$replace, linebyline:$linebyline, rei:$rei,reu:$reu,rem:$rem,res:$res.')
         ..trace('i, escape:$esc, $escapeRegexp');
     }
-    final mimeext = <String, String>{};
-    if (mimeexts.isNotEmpty) mimeext.addAll(parseAssigns(mimeexts));
-    // print(mimeext);
+
     action.search(
       esc ? escapeRegexp : regexp,
       replace: replace,
-      extMime: mimeext,
       lineByLine: linebyline,
       onlyGroups: onlygroups,
       lineNum: linenum,
@@ -440,26 +420,7 @@ class MirrorCommand extends Command {
     late final bool relative;
     late final int tail;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final env = {...Platform.environment, ...define};
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftPattern = getOpiton('pattern', config, gRes: globalResults)
-        ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
-        ..ftFields = getOpitons('fields', config,
-            gRes: globalResults, datalist: fieldNames)
-        ..ftSizes = getSizes(config, globalResults)
-        ..ftTimes = getTimes(config, globalResults)
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults)
-        ..ftTimeType = getOpiton('time_type', ftRun.ftConfig,
-            gRes: globalResults,
-            defaultTo: timeTypeDefault,
-            datalist: timeTypes);
+      _setFtRunner(ftRun, globalResults);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -481,7 +442,7 @@ class MirrorCommand extends Command {
       throw UsageException('err: not writable. $target', '');
     }
 
-    if (v) traceGlobalParam(logger, ftRun, source);
+    if (v) _traceGlobalParam(logger, ftRun, source);
     final action = BasicPathAction(
       source,
       pattern: ftRun.ftPattern,
@@ -553,26 +514,7 @@ class CleanCommand extends Command {
 
     late final String source;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final env = {...Platform.environment, ...define};
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftPattern = getOpiton('pattern', config, gRes: globalResults)
-        ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
-        ..ftFields = getOpitons('fields', config,
-            gRes: globalResults, datalist: fieldNames)
-        ..ftSizes = getSizes(config, globalResults)
-        ..ftTimes = getTimes(config, globalResults)
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults)
-        ..ftTimeType = getOpiton('time_type', ftRun.ftConfig,
-            gRes: globalResults,
-            defaultTo: timeTypeDefault,
-            datalist: timeTypes);
+      _setFtRunner(ftRun, globalResults);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -582,7 +524,7 @@ class CleanCommand extends Command {
       throw UsageException(e.toString(), '');
     }
 
-    if (v) traceGlobalParam(logger, ftRun, source);
+    if (v) _traceGlobalParam(logger, ftRun, source);
     final action = BasicPathAction(
       source,
       pattern: ftRun.ftPattern,
@@ -660,37 +602,18 @@ class WipeCommand extends Command {
     late final String source;
     late final List<String> levels;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final env = {...Platform.environment, ...define};
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftPattern = getOpiton('pattern', config, gRes: globalResults)
-        ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
-        ..ftFields = getOpitons('fields', config,
-            gRes: globalResults, datalist: fieldNames)
-        ..ftSizes = getSizes(config, globalResults)
-        ..ftTimes = getTimes(config, globalResults)
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults)
-        ..ftTimeType = getOpiton('time_type', ftRun.ftConfig,
-            gRes: globalResults,
-            defaultTo: timeTypeDefault,
-            datalist: timeTypes);
+      _setFtRunner(ftRun, globalResults);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
-      levels = getOpitons('levels', config, aRes: argResults);
+      levels = getOpitons('levels', ftRun.ftConfig, aRes: argResults);
     } on UsageException catch (_, __) {
       rethrow;
     } catch (e) {
       throw UsageException(e.toString(), '');
     }
 
-    if (v) traceGlobalParam(logger, ftRun, source);
+    if (v) _traceGlobalParam(logger, ftRun, source);
     final action = BasicPathAction(
       source,
       pattern: ftRun.ftPattern,
@@ -769,26 +692,7 @@ class RmDirCommand extends Command {
     late final bool force;
     late final bool keeptop;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final env = {...Platform.environment, ...define};
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftPattern = getOpiton('pattern', config, gRes: globalResults)
-        ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
-        ..ftFields = getOpitons('fields', config,
-            gRes: globalResults, datalist: fieldNames)
-        ..ftSizes = getSizes(config, globalResults)
-        ..ftTimes = getTimes(config, globalResults)
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults)
-        ..ftTimeType = getOpiton('time_type', ftRun.ftConfig,
-            gRes: globalResults,
-            defaultTo: timeTypeDefault,
-            datalist: timeTypes);
+      _setFtRunner(ftRun, globalResults);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -802,7 +706,7 @@ class RmDirCommand extends Command {
       throw UsageException(e.toString(), '');
     }
 
-    if (v) traceGlobalParam(logger, ftRun, source);
+    if (v) _traceGlobalParam(logger, ftRun, source);
     final action = BasicPathAction(
       source,
       pattern: ftRun.ftPattern,
@@ -859,26 +763,7 @@ class FdupsCommand extends Command {
 
     late final String source;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final env = {...Platform.environment, ...define};
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftPattern = getOpiton('pattern', config, gRes: globalResults)
-        ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
-        ..ftFields = getOpitons('fields', config,
-            gRes: globalResults, datalist: fieldNames)
-        ..ftSizes = getSizes(config, globalResults)
-        ..ftTimes = getTimes(config, globalResults)
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults)
-        ..ftTimeType = getOpiton('time_type', ftRun.ftConfig,
-            gRes: globalResults,
-            defaultTo: timeTypeDefault,
-            datalist: timeTypes);
+      _setFtRunner(ftRun, globalResults);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -888,7 +773,7 @@ class FdupsCommand extends Command {
       throw UsageException(e.toString(), '');
     }
 
-    if (v) traceGlobalParam(logger, ftRun, source);
+    if (v) _traceGlobalParam(logger, ftRun, source);
     final action = BasicPathAction(
       source,
       pattern: ftRun.ftPattern,
@@ -984,26 +869,7 @@ class ArchiveCommand extends Command {
     late final int tail;
     late String type;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final env = {...Platform.environment, ...define};
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftPattern = getOpiton('pattern', config, gRes: globalResults)
-        ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
-        ..ftFields = getOpitons('fields', config,
-            gRes: globalResults, datalist: fieldNames)
-        ..ftSizes = getSizes(config, globalResults)
-        ..ftTimes = getTimes(config, globalResults)
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults)
-        ..ftTimeType = getOpiton('time_type', ftRun.ftConfig,
-            gRes: globalResults,
-            defaultTo: timeTypeDefault,
-            datalist: timeTypes);
+      _setFtRunner(ftRun, globalResults);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -1022,7 +888,7 @@ class ArchiveCommand extends Command {
       throw UsageException(e.toString(), '');
     }
 
-    if (v) traceGlobalParam(logger, ftRun, source);
+    if (v) _traceGlobalParam(logger, ftRun, source);
     final action = BasicPathAction(
       source,
       pattern: ftRun.ftPattern,
@@ -1126,26 +992,7 @@ class UnArchiveCommand extends Command {
     late final bool relative;
     late final int tail;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final env = {...Platform.environment, ...define};
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftPattern = getOpiton('pattern', config, gRes: globalResults)
-        ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
-        ..ftFields = getOpitons('fields', config,
-            gRes: globalResults, datalist: fieldNames)
-        ..ftSizes = getSizes(config, globalResults)
-        ..ftTimes = getTimes(config, globalResults)
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults)
-        ..ftTimeType = getOpiton('time_type', ftRun.ftConfig,
-            gRes: globalResults,
-            defaultTo: timeTypeDefault,
-            datalist: timeTypes);
+      _setFtRunner(ftRun, globalResults);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -1161,7 +1008,7 @@ class UnArchiveCommand extends Command {
       throw UsageException(e.toString(), '');
     }
 
-    if (v) traceGlobalParam(logger, ftRun, source);
+    if (v) _traceGlobalParam(logger, ftRun, source);
     final action = BasicPathAction(
       source,
       pattern: ftRun.ftPattern,
@@ -1251,21 +1098,12 @@ class ExecuteCommand extends Command {
     late final Map<String, List<String>> blockMap;
     late final String delay;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final env = {...Platform.environment, ...define};
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults);
+      _setFtRunner(ftRun, globalResults);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
 
-      blocks = getOpitons('blocks', config, aRes: argResults);
+      blocks = getOpitons('blocks', ftRun.ftConfig, aRes: argResults);
       blockMap = getExecBlock(ftRun.ftConfig, ftRun.ftEnv, blocks);
       delay =
           getOpiton('delay', ftRun.ftConfig, aRes: argResults, defaultTo: '1');
@@ -1409,18 +1247,11 @@ class ShellCommand extends Command {
     late final Map<String, List<String>> blockMap;
     late final String delay;
     try {
-      final args = globalResults?.arguments ?? [];
-      final config = configFromArgParse(ftRun.argParser, args);
-      final define = getDefine(config, globalResults);
-      final shvar = _getShellVar(config);
-      define.addAll(shvar);
-      final env = {...Platform.environment, ...define};
-      ftRun
-        ..ftConfig = config
-        ..ftDefine = define
-        ..ftEnv = env
-        ..ftErrExit =
-            getFlag('errexit', config, defaultTo: true, gRes: globalResults);
+      _setFtRunner(ftRun, globalResults);
+
+      final shvar = _getShellVar(ftRun.ftConfig);
+      ftRun.ftDefine.addAll(shvar);
+      ftRun.ftEnv = {...Platform.environment, ...ftRun.ftDefine};
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -1434,7 +1265,7 @@ class ShellCommand extends Command {
       exitOnNonzore = getFlag('$name.exit_on_nonzore', ftRun.ftConfig,
           aRes: argResults, defaultTo: false);
 
-      blocks = getOpitons('blocks', config, aRes: argResults);
+      blocks = getOpitons('blocks', ftRun.ftConfig, aRes: argResults);
       blockMap = getShellBlock(ftRun.ftConfig, ftRun.ftEnv, source, blocks);
       delay =
           getOpiton('delay', ftRun.ftConfig, aRes: argResults, defaultTo: '1');
