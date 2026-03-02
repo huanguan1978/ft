@@ -136,7 +136,31 @@ Note: `time` supports **Human-Readable Relative Time** as: **[Quantity] [Time Un
 *   List all files in the `~/Desktop` directory older than 1 month:
     - `ft list --source=~/Desktop --time_le='1 month ago'`
 
-## T5-Path Matching - Examples
+## T5-MIMETYPE-Filtering
+After generating a file list via path matching (e.g., Glob patterns), you can further **refine** the results based on the files' **MIME types**.
+
+MIME (Multipurpose Internet Mail Extensions) is a standard for identifying file formats. It consists of two parts: a **Type** and a **Subtype**, separated by a slash `/`.
+
+*   **Type**: Represents the general category, such as `text`, `image`, `video`, `application`, etc.
+*   **Subtype**: Represents the specific format, such as `plain`, `html`, `png`, `json`, etc.
+*   **Examples**: `text/plain`, `text/html`, `image/png`, `application/json`.
+
+**Parameter Definitions:**
+
+*   `--mime_overrides`: Used to fix or add MIME associations for file extensions (overwrites existing types or adds unrecognized ones).
+*   `--mime_includes`: Includes files matching specified MIME types. Supports full names, type parts, or subtype parts.
+*   `--mime_excludes`: Excludes files matching specified MIME types. Supports full names, type parts, or subtype parts.
+
+**Usage Examples (with `ft list`):**
+
+*   **List all image files in `~/Downloads`:**  
+    `ft list --source=~/Downloads --mime_includes='image/'`
+*   **List all images, but exclude Icons and SVG files:**  
+    `ft list --source=~/Downloads --mime_includes='image/' --mime_excludes='image/x-icon,image/svg+xml'`
+*   **List all TOML and YAML files using custom overrides:**  
+    `ft list --source=~/Downloads --mime_includes='toml,yaml' --mime_overrides='tml=text/toml,toml=text/toml,yml=text/yaml,yaml=text/yaml' --fields=ok,action,type,mime -v`
+
+## T6-Path Matching - Examples
 
 ```sh
 # ft list --help
@@ -149,7 +173,7 @@ ft list ～/Downloads --pattern='**.zip' --size_ge=1M --fileds=ok,action,type,si
 | 1 | list | f | 4.6M | Aug 01 16:33 | ~/Downloads/FileShows-icons-5.zip |
 | 1 | list | f | 1.6M | Dec 11 2024 | ~/Downloads/BOC202411/BOC-2024-11-0.pdf.zip |
 
-## T6-Text Search
+## T7-Text Search
 
 After matching paths, use regular expressions to search within the content of the resulting text-type files.
 
@@ -164,7 +188,7 @@ ft search ~/Downloads --pattern="**.yaml" --excludes="/**/.**" --regexp="version
 | i | L:3 | I:version: 1.0.1 | F:~/Downloads/xft/pubspec.yaml |
 | i | L:3 | I:version: 1.0.0 | F:~/Downloads/ft/pubspec.yaml |
 
-## T7-Regular Expression Basic Syntax
+## T8-Regular Expression Basic Syntax
 
 -   **Characters**:
     -   `.`: Matches any single character except newline (if `dotAll` flag is enabled, matches any character).
@@ -204,7 +228,7 @@ ft search ~/Downloads --pattern="**.yaml" --excludes="/**/.**" --regexp="version
 
 For in-depth learning of regular expressions, refer to [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions "javascript regular expressions") and [Step-by-Step Learning](https://regexlearn.com "Learn Regex step by step, from zero to advanced").
 
-## T8-Parameter Values and Environment Variables: When to Quote?
+## T9-Parameter Values and Environment Variables: When to Quote?
 
 **Core Principle:** Always enclose values or expanded variables in quotes when they contain `spaces` or `special characters`.
 Special characters: `* ? [] < > | & ; $ # \ ( )`

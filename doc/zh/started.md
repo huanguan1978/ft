@@ -143,7 +143,31 @@ Note：`time` support  **Human-Readable Relative Time** as: **[Quantity] [Time U
     `ft list --source=~/Desktop --time_le='1 month ago'
 
 
-## T5-路径匹配-示例
+## T5-MIMETYPE-类型筛选
+在通过路径匹配（如Glob模式）得到匹配文件清单后，还可以进一步根据文件的**mimetype**对清单进行二次筛选。
+
+MIMETYPE（Multipurpose Internet Mail Extensions）是标识文件格式的标准。它由两部分组成：**类型 (Type)** 和 **子类型 (Subtype)**，中间用 `/` 分隔。
+
+* 类型：表示文件的大类，如 `text`, `image`, `video`, `application` 等。
+* 子类：表示具体的格式，如 `plain`, `html`, `png`, `json` 等。
+* 示例：`text/plain`、`text/html`、`image/png`、`application/json`。
+
+**筛选参数定义：**
+
+* `--mime_overrides`: 用于修正或新增系统未识别的文件后缀。
+* `--mime_includes` : 包含指定的 MIME 类型。支持全称、类型名或子类型名。 
+* `--mime_excludes` : 排除指定的 MIME 类型。支持全称、类型名或子类型名。
+
+**筛选参数示例 (结合`ft list`命令)：**
+
+*   列出`~/Downloads`目录下所有图像文件：  
+    `ft list --source=~/Downloads --mime_includes='image/'`  
+*   列出`~/Downloads`目录下所有图像文件，排除ICON和SVG文件：  
+    `ft list --source=~/Downloads --mime_includes='image/' --mime_excludes='image/x-icon,image/svg+xml' `
+*   列出`~/Downloads`目录下所有TOML和YAML文件，用自已指定的类型：  
+    `ft list --source=~/Downloads --mime_includes='toml,yaml' --mime_overrides='tml=text/toml,toml=text/toml,yml=text/yaml,yaml=text/yaml' --fields=ok,action,type,mime -v `
+
+## T6-路径匹配-示例
 
 ```sh
 # ft list --help
@@ -157,7 +181,7 @@ ft list ～/Downloads --pattern='**.zip' --size_ge=1M --fileds=ok,action,type,si
 | 1  |  list   | f    | 1.6M | Dec 11 2024 | ~/Downloads/BOC202411/BOC-2024-11-0.pdf.zip     |
 
 
-## T6-文本搜索
+## T7-文本搜索
 在匹配路径后获得的文本类型文件内容中，用正则表达式进行搜索。
 
 ```sh
@@ -172,7 +196,7 @@ ft search ~/Downloads --pattern="**.yaml" --excludes="/**/.**" --regexp="version
 |i | L:3 | I:version: 1.0.0 | F:~/Downloads/ft/pubspec.yaml  |
 
 
-## T7-正则表达式基础语法
+## T8-正则表达式基础语法
 -   字符:
     -   `.`: 匹配除换行符以外的任何单个字符 (启用 `dotAll` 标志，则匹配任何字符)。
     -   `\d`: 匹配任何数字 (0-9)。
@@ -212,7 +236,7 @@ ft search ~/Downloads --pattern="**.yaml" --excludes="/**/.**" --regexp="version
 深入学习正则表达式，可参考 [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions "javascript regular expressions"), [Step-by-Step Learning](https://regexlearn.com "Learn Regex step by step, from zero to advanced").
 
 
-## T8-参数值和环境变量：何时加引号？
+## T9-参数值和环境变量：何时加引号？
 
 核心原则：当值或变量展开后有`空格`或`特殊字符`时，必须加引号。  
 特殊字符：* ? [] < > | & ; $ # \ ( )
