@@ -11,7 +11,7 @@ void main(List<String> args) {
   final logger = verbose ? Logger.verbose(logTime: false) : Logger.standard();
 
   final version = args.contains('--version');
-  if (version) logger.stdout('i, version:$version');
+  if (version) logger.stdout('i, version:$ftVer');
 
   final gen = args.contains('--config_gen');
   if (gen) {
