@@ -1,3 +1,11 @@
+## 1.0.5
+
+- Shell: fixed, `Process.runSync` passes argument block, e.g. (rsync -e "..."): 
+```bash
+rsync -avz -e "ssh -i ~/FileShows/.ssh/id_rsa -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" 
+```
+- Docs: more configurations, examples, and screenshots.
+
 ## 1.0.4
 
 - Feat: Introduced MIME-type filtering (`--mime_includes`, `--mime_excludes`) and custom MIME mapping (`--mime_overrides`).

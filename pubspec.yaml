@@ -1,6 +1,6 @@
 name: filetools
 description: 'FileTools: cross-platform glob & streams.'
-version: 1.0.4
+version: 1.0.5
 
 repository: https://github.com/huanguan1978/ft
 
@@ -20,6 +20,22 @@ topics:
   - tools
   - utils
   - command
+
+screenshots:
+  - description: 'Running `ft help` will display an overview of all global options and available subcommands'
+    path: doc/screenshots/ft-help.png
+  - description: 'Running `ft help <command>` will show the subcommands detailed usage, unique parameters, and rich examples.'
+    path: doc/screenshots/ft-help-list.png
+  - description: 'the example output for the `list` subcommand, fully demonstrating how to combine global parameters for file matching and filtering.'
+    path: doc/screenshots/ft-list-example.png
+  - description: 'Automation & Orchestration Subcommands; `execute`: Batch run `ft` internal subcommands; `shell`: Batch run native system CLI applications.'
+    path: doc/screenshots/ft-help-execute-shell.png
+  - description: 'Automation & Orchestration use YAML configuration example.'
+    path: doc/screenshots/ft-config-example.png
+  - description: '`execute`: Batch run `ft` internal subcommands (via YAML configuration).'
+    path: doc/screenshots/ft-execute-example.png
+  - description: '`shell`: Batch run native system CLI applications (via YAML configuration).'
+    path: doc/screenshots/ft-shell-example.png
 
 dependencies:
   glob: ^2.1.3
