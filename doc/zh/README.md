@@ -175,6 +175,10 @@ Usage: ft list <source> [arguments]
 Run "ft help" to see global options.
 ```
 
+以下是 `list` 快捷应用的示例输出:
+
+![ft-list-example](../screenshots/ft-list-example.png)
+
 ### 自动化与编排
 `ft execute` 是 `ft` 的核心自动化功能，它让您通过简单的 YAML 配置文件，**批量、跨平台**地运行一系列 `ft` 内部快捷应用。告别复杂的平台脚本，用统一的配置管理任务。
 
@@ -232,6 +236,8 @@ Run "ft help" to see global options.
     1  mirror f ~/Documents/FileShows/mirror/Desktop/20251009/20251009075522/.DS_Store
     1  mirror f ~/Documents/FileShows/mirror/Desktop/20251009/20251009075522/memo.txt    
     ```
+
+👉 [查看更多有关于自动化与编排的配置与示例及运行截图](../screenshots/README.md#automation--orchestration-subcommands)
 
 
 ## 功能模块化集成指南

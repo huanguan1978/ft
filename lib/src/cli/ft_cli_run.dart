@@ -70,7 +70,7 @@ class ListCommand extends Command {
       "e.g. list CWD, use . or \$PWD (Unix-like) or \$CURDIR (ft define) \n"
       "  ft list . \n\n"
       "e.g. list CWD, all *.md, use variable name. \n"
-      r"  ft list '\$CURDIR' --pattern='$mdfiles' --define='mdfiles=**.md'"
+      r"  ft list '$CURDIR' --pattern='$mdfiles' --define='mdfiles=**.md'"
       "\n\n"
       "e.g. list CWD, all *.md, use mimetype. \n"
       "  ft list . --mime_includes='text/markdown' -v \n\n"
@@ -1280,7 +1280,7 @@ class ShellCommand extends Command {
 
       final shvar = _getShellVar(ftRun.ftConfig);
       ftRun.ftDefine.addAll(shvar);
-      ftRun.ftEnv = {...Platform.environment, ...ftRun.ftDefine};
+      ftRun.ftEnv.addAll(shvar);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -1342,7 +1342,7 @@ class ShellCommand extends Command {
       logger.trace('i, block:$blockName, cmd:$cmd');
       cmd = expandVar(cmd.trim(), map: ftRun.ftEnv);
 
-      var parts = cmd.split(spaceDelimiter);
+      var parts = parseCliArgs(cmd);
       var name = parts.first.trim();
       var args = parts.getRange(1, parts.length).map((e) => e.trim()).toList()
         ..removeWhere((e) => e.isEmpty);
@@ -1356,8 +1356,7 @@ class ShellCommand extends Command {
       }
 
       var exec = name.toLowerCase();
-      var progress = logger.progress(
-          'i, block:$blockName, run:$name ${args.join(spaceDelimiter)} ');
+      var progress = logger.progress('d, block:$blockName, exe:$parts  ');
 
       if (exec == 'cd') {
         if (args.isEmpty) {

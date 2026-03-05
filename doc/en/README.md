@@ -173,6 +173,9 @@ Usage: ft list <source> [arguments]
 Run "ft help" to see global options.
 ```
 
+the example output for the `list` subcommand:
+![ft-list-example](../screenshots/ft-list-example.png)
+
 ### Automation & Orchestration
 `ft execute` is `ft`'s core automation feature, allowing you to **batch and cross-platform** run a series of `ft` internal subcommands through simple YAML configuration files. Ditch complex platform-specific scripts and manage your tasks with a unified configuration.
 
@@ -230,6 +233,8 @@ Incrementally mirror documents within a user's temporary desktop workspace to al
     1  mirror f ~/Documents/FileShows/mirror/Desktop/20251009/20251009075522/.DS_Store
     1  mirror f ~/Documents/FileShows/mirror/Desktop/20251009/20251009075522/memo.txt    
     ```
+
+👉 [Explore configurations, examples, and screenshots.](../screenshots/README.md#automation--orchestration-subcommands)
 
 ## Modular Integration Guide
 
