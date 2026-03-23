@@ -1,3 +1,8 @@
+## 1.0.6
+
+- fix(Shell): resolve progress bar hang after `cd` command.
+- refactor(crc): split into independent CRC64 and CRC32 methods.
+
 ## 1.0.5
 
 - Shell: fixed, `Process.runSync` passes argument block, e.g. (rsync -e "..."): 

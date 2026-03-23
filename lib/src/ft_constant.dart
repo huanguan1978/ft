@@ -54,7 +54,7 @@ bool get isUnixLike => (Platform.isLinux || Platform.isMacOS);
 bool get isDesktop => (isWindows || isUnixLike);
 
 /// The version string for 'ft'.
-final ftVer = '1.0.5';
+final ftVer = '1.0.6';
 
 /// The operating system name string for 'ft'.
 final ftOs = Platform.operatingSystem;
