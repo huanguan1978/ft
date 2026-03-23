@@ -1356,7 +1356,6 @@ class ShellCommand extends Command {
       }
 
       var exec = name.toLowerCase();
-      var progress = logger.progress('d, block:$blockName, exe:$parts  ');
 
       if (exec == 'cd') {
         if (args.isEmpty) {
@@ -1373,6 +1372,7 @@ class ShellCommand extends Command {
         continue;
       }
 
+      var progress = logger.progress('d, block:$blockName, exe:$parts  ');
       try {
         var result = Process.runSync(
           name,
