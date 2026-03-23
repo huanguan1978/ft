@@ -28,7 +28,7 @@ part 'src/ft_textmime.dart';
 part 'src/ft_exception.dart';
 part 'src/ft_transformer.dart';
 part 'src/cli/ft_cli_logger.dart';
-part 'src/ft_crc64.dart';
+part 'src/ft_crc.dart';
 
 part 'src/ft_util.dart';
 part 'src/ft_size.dart';
