@@ -339,3 +339,35 @@ List<String> pathextract(String text) {
 
   return foundPaths.toList();
 }
+
+/// Resolves a [path] string into an absolute, normalized system path.
+///
+/// Expands `~` to the user's home directory and replaces environment
+/// variables (e.g., `$VAR`) with their corresponding values, then
+/// returns the absolute and normalized path.
+String resolvePath(String path, [Map<String, String> env = const {}]) {
+  path = path.trim();
+  if (path.isEmpty) return path;
+  if (env.isEmpty) env = Platform.environment;
+
+  if (path.startsWith('~')) {
+    final home = env['HOME'] ?? env['USERPROFILE'];
+    if (home != null) path = path.replaceFirst('~', home);
+  }
+  if (path.contains(r'$') || path.contains('%')) {
+    if (Platform.isWindows) {
+      // Windows: %VAR%
+      path = path.replaceAllMapped(RegExp(r'%([^%]+)%'), (match) {
+        return env[match.group(1)!] ?? match.group(0)!;
+      });
+    } else {
+      // POSIX: $VAR or ${VAR}
+      path = path.replaceAllMapped(RegExp(r'\$(\w+|\{([^}]+)\})'), (match) {
+        final varName = match.group(2) ?? match.group(1)!;
+        return env[varName] ?? match.group(0)!;
+      });
+    }
+  }
+
+  return p.normalize(p.absolute(path));
+}

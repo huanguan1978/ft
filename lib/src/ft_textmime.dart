@@ -60,3 +60,31 @@ final Map<String, String> textMimeOverrides = <String, String>{
   // 'yml': 'application/yaml',
   // 'tml': 'application/toml',
 };
+
+/// Parses MIME type definitions from raw text content (e.g., /etc/mime.types).
+///
+/// Returns a map where keys are file extensions (without dots) and values
+/// are their corresponding MIME types.
+///
+/// Example:
+/// ```dart
+/// final content = '.log    text/x-log\n.json   application/json';
+/// final map = parseMimeTypes(content);
+/// // {'log': 'text/x-log', 'json': 'application/json'}
+/// ```
+Map<String, String> parseMimeTypes(String content) {
+  final regexp = RegExp(r'\s+');
+  final map = <String, String>{};
+  final lines = content.split(RegExp(r'\r?\n'));
+
+  for (var line in lines) {
+    line = line.trim();
+    if (line.isEmpty || line.startsWith('#')) continue;
+    final parts = line.split(regexp);
+    if (parts.length >= 2) {
+      final ext = parts[0].startsWith('.') ? parts[0].substring(1) : parts[0];
+      map[ext] = parts[1];
+    }
+  }
+  return map;
+}

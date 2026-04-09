@@ -105,6 +105,7 @@ Global options:
                                   (defaults to "**")
     --excludes                    Glob pattern after exclusion (e.g. --excludes='.**')
     --fields                      show fields (ok, action, type, mime, perm, time, size, extra)
+    --mime_file=<file>            load additional MIME types from an external file (e.g. mime.types)
     --mime_overrides              Override or add MIME types (e.g. 'tml=text/toml,toml=application/toml')
     --mime_includes               Filter by MIME types or subtypes (e.g. 'text/markdown,text,markdown')
     --mime_excludes               Exclude specific types or subtypes (e.g. 'application/zip,zip')
@@ -142,11 +143,14 @@ Running `ft help <command>` will show the subcommand's detailed usage, unique pa
 $ ft help list
 listing all entities that match a glob 
 
-e.g. list CWD, use . or $PWD (Unix-like) or $CURDIR (ft define)
+e.g. list CWD, use . or $PWD (Unix-like) or $CURDIR (ft define) 
   ft list . 
 
 e.g. list CWD, all *.md, use variable name. 
   ft list '$CURDIR' --pattern='$mdfiles' --define='mdfiles=**.md'
+
+e.g. list CWD, all *.md, use mimetype. 
+  ft list . --mime_includes='text/markdown' -v 
 
 e.g. list CWD, excluding hiddens, verbose, pretty output. 
   ft list . --excludes='/**/.**' --fields=ok,action,type,perm,time,size -v 
@@ -177,7 +181,7 @@ Run "ft help" to see global options.
 ```
 
 the example output for the `list` subcommand:
-![ft-list-example](https://github.com/huanguan1978/ft/blob/main/doc/screenshots/ft-list-example.png)
+![ft-list-example](doc/screenshots/ft-list-example.png)
 
 
 ### Automation & Orchestration

@@ -89,6 +89,32 @@ void main() {
       }
     });
 
+    test('resolvePath test', () {
+      final Map<String, String> env = {
+        'HOME': environ['HOME'] ?? 'NoSetHome', // r'/Users/kaguya',
+        'USERPROFILE':
+            environ['USERPROFILE'] ?? 'NoSetHome', // r'C:\Users\TestUser',
+        'DS_STORE': r'**.DS_Store',
+      };
+
+      final items = [
+        (1, r'$HOME/Documents', env["HOME"]! + r'/Documents'),
+        (2, r'${HOME}/Documents', env["HOME"]! + r'/Documents'),
+        (3, r'$HOME/Documents/$ABC_', env["HOME"]! + r'/Documents/$ABC_'),
+        (5, r'${DS_STORE}', p.absolute(env['DS_STORE']!)),
+      ];
+      if (isWindows) {
+        items.add(
+          (4, r'%USERPROFILE%\Documents', env["USERPROFILE"]! + r'\Documents'),
+        );
+      }
+
+      for (var item in items) {
+        expect(resolvePath(item.$2, env), equals(item.$3),
+            reason: item.$1.toString());
+      }
+    });
+
     test('expandVar test', () {
       final Map<String, String> env = {
         'HOME': environ['HOME'] ?? 'NoSetHome', // r'/Users/kaguya',

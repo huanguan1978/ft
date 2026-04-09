@@ -18,12 +18,31 @@ extension CommandExtension on Command {
   // cls_lastline
 }
 
-FtRunner _setFtRunner(FtRunner runner, ArgResults? globalResults) {
+FtRunner _setFtRunner(
+    FtRunner runner, ArgResults? globalResults, Logger logger) {
   final args = globalResults?.arguments ?? [];
 
   final config = configFromArgParse(runner.argParser, args);
   final define = getDefine(config, globalResults);
   final env = {...Platform.environment, ...define};
+
+  var mimemap = <String, String>{};
+  var mimefile =
+      getOpiton('mime_file', config, gRes: globalResults, isNotEmpty: false);
+  if (mimefile.isNotEmpty) {
+    mimefile = resolvePath(mimefile, env);
+    try {
+      final mimetext = File(mimefile).readAsStringSync();
+      if (mimetext.isNotEmpty) mimemap = parseMimeTypes(mimetext);
+    } catch (e) {
+      logger.stderr('e, mime_file, $e');
+    }
+  }
+  final mimeOpts = getOpitons('mime_overrides', config, gRes: globalResults);
+  if (mimemap.isNotEmpty) {
+    mimemap.forEach((key, value) => mimeOpts.add("$key=$value"));
+    if (runner.ftVerbose) logger.trace('d, mime, overrides append file data.');
+  }
 
   return runner
     ..ftConfig = config
@@ -33,8 +52,8 @@ FtRunner _setFtRunner(FtRunner runner, ArgResults? globalResults) {
     ..ftExcludes = getOpitons('excludes', config, gRes: globalResults)
     ..ftFields =
         getOpitons('fields', config, gRes: globalResults, datalist: fieldNames)
-    ..ftMimeOverrides =
-        getOpitons('mime_overrides', config, gRes: globalResults)
+    ..ftMimeFile = mimefile
+    ..ftMimeOverrides = mimeOpts
     ..ftMimeIncludes = getOpitons('mime_includes', config, gRes: globalResults)
     ..ftMimeExcludes = getOpitons('mime_excludes', config, gRes: globalResults)
     ..ftSizes = getSizes(config, globalResults)
@@ -134,7 +153,7 @@ class ListCommand extends Command {
     late final String type;
     late final bool matched;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -296,7 +315,7 @@ class SearchCommand extends Command {
     late final bool linenum;
     late final bool esc;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -428,7 +447,7 @@ class MirrorCommand extends Command {
     late final bool relative;
     late final int tail;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -525,7 +544,7 @@ class CleanCommand extends Command {
 
     late final String source;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -616,7 +635,7 @@ class WipeCommand extends Command {
     late final String source;
     late final List<String> levels;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -709,7 +728,7 @@ class RmDirCommand extends Command {
     late final bool force;
     late final bool keeptop;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -783,7 +802,7 @@ class FdupsCommand extends Command {
 
     late final String source;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -892,7 +911,7 @@ class ArchiveCommand extends Command {
     late final int tail;
     late String type;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -1018,7 +1037,7 @@ class UnArchiveCommand extends Command {
     late final bool relative;
     late final int tail;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -1127,7 +1146,7 @@ class ExecuteCommand extends Command {
     late final Map<String, List<String>> blockMap;
     late final String delay;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       source = getSource(ftRun.ftConfig, globalResults,
           aRes: argResults, env: ftRun.ftEnv);
@@ -1276,7 +1295,7 @@ class ShellCommand extends Command {
     late final Map<String, List<String>> blockMap;
     late final String delay;
     try {
-      _setFtRunner(ftRun, globalResults);
+      _setFtRunner(ftRun, globalResults, logger);
 
       final shvar = _getShellVar(ftRun.ftConfig);
       ftRun.ftDefine.addAll(shvar);
@@ -1426,6 +1445,7 @@ class FtRunner<T> extends CommandRunner<T> {
   late final List<DateTime> ftTimes;
   late final String ftPattern;
   late final List<String> ftExcludes;
+  late final String ftMimeFile;
   late final List<String> ftMimeOverrides;
   late final List<String> ftMimeIncludes;
   late final List<String> ftMimeExcludes;
@@ -1503,6 +1523,12 @@ FtRunner cmdRunner(List<String> args) {
     ..addMultiOption(
       'fields',
       help: "show fields (ok, action, type, mime, perm, time, size, extra)",
+    )
+    ..addOption(
+      'mime_file',
+      valueHelp: 'file',
+      help:
+          'load additional MIME types from an external file (e.g. mime.types)',
     )
     ..addMultiOption(
       'mime_overrides',

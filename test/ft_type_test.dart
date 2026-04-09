@@ -11,6 +11,13 @@ void main() {
       // Additional setup goes here.
     });
 
+    test('parseMimeTypes test', () {
+      final content = '.log    text/x-log\n.json   application/json';
+      final mimeMap = parseMimeTypes(content);
+      final result = {'log': 'text/x-log', 'json': 'application/json'};
+      expect(mimeMap, equals(result));
+    });
+
     test('isTextMimeType test', () {
       var items = [
         (1, 'a.txt', true),

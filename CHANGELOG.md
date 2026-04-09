@@ -1,3 +1,8 @@
+## 1.0.7
+
+- Add `parseMimeTypes` and `resolvePath` utility functions.
+- Add `--mime_file` CLI option to load MIME types from external files.
+
 ## 1.0.6
 
 - fix(Shell): resolve progress bar hang after `cd` command.
