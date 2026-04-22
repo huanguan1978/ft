@@ -30,6 +30,13 @@ Get started now and experience the power of `ft`'s cross-platform file managemen
 *   **For Dart/Flutter Users:**
     `dart pub global activate --executable=ft filetools`
 
+*   **Using install.sh Script:**
+    The installation script provides automatic setup across platforms. 
+    
+    `curl -sSL https://raw.githubusercontent.com/huanguan1978/ft/main/install.sh | bash`
+
+    The script automatically detects your OS and architecture, downloads the appropriate binary, and installs it to your system. Supports macOS, Linux, and Windows (Git Bash/MSYS2/Cygwin).
+
 *   **Developer Integration:**
     [**Integrate `ft`'s source library into your Dart/Flutter project**](library.md).
 

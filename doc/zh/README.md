@@ -31,6 +31,13 @@
 *   **Dart/Flutter 用户：**
     `dart pub global activate --executable=ft filetools`
 
+*   **使用安装脚本：**
+    使用安装脚本一键完成跨平台自动安装：
+
+    `curl -sSL https://raw.githubusercontent.com/huanguan1978/ft/main/install.sh | bash`
+
+    脚本自动识别您的操作系统和处理器架构，下载相应的预编译二进制文件，并安装到系统。支持 macOS、Linux 和 Windows（Git Bash/MSYS2/Cygwin）。
+
 *   **开发者（集成）：**
     [**集成 `ft` 源代码库到您的 Dart/Flutter 项目**](library.md)。
 
