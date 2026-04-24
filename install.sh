@@ -28,7 +28,9 @@
 #    - Cygwin (CYGWIN)
 #    - x86_64: downloads ft-windows-x64-1.0.7.zip
 #    - Install directory: $HOME/AppData/Local/bin
-#    - Installation method: bash install.sh (this script)
+#    - Installation methods:
+#      * Automatic: bash install.sh (this script)
+#      * Package manager: winget install gai.filetools
 #
 # Prerequisites:
 #    - curl: for downloading the binary
@@ -207,4 +209,9 @@ if [ "$OS_NAME" = "macos" ]; then
     echo "Note: On macOS, you can also install via package manager:"
     echo "  - MacPorts: sudo port install ft"
     echo "  - Homebrew: brew tap huanguan1978/tap && brew install huanguan1978/tap/ft"
+fi
+
+if [ "$OS_NAME" = "windows" ]; then
+    echo "Note: On Windows, you can also install via package manager:"
+    echo "  - Winget: winget install gai.filetools"
 fi
