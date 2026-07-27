@@ -40,6 +40,10 @@ Get started now and experience the power of `ft`'s cross-platform file managemen
     
     The script automatically detects your OS and architecture, downloads the appropriate binary, and installs it to your system. Supports macOS, Linux, and Windows (Git Bash/MSYS2/Cygwin).
 
+*   **Using Package Managers:**
+    *   **Windows:** `winget install gai.filetools`
+    *   **macOS:** Install via the [custom tap (Homebrew & MacPorts)](https://github.com/huanguan1978/homebrew-tap).
+
 *   **Developer Integration:**
     [**Integrate `ft`'s source library into your Dart/Flutter project**](https://github.com/huanguan1978/ft/tree/main/doc/en/library.md).
 

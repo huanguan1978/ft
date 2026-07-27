@@ -6,8 +6,8 @@
 # Supported Platforms and Installation Methods:
 # 
 # 1. macOS (Darwin)
-#    - ARM64 (Apple Silicon M1/M2/M3): downloads ft-macos-arm64-1.0.7.zip
-#    - x86_64 (Intel): downloads ft-macos-x64-1.0.7.zip
+#    - ARM64 (Apple Silicon M1/M2/M3): downloads ft-macos-arm64-1.0.8.zip
+#    - x86_64 (Intel): downloads ft-macos-x64-1.0.8.zip
 #    - Install directory: $HOME/.local/bin
 #    - Installation methods:
 #      * Automatic: bash install.sh (this script)
@@ -15,10 +15,10 @@
 #      * Package manager: brew tap huanguan1978/tap && brew install huanguan1978/tap/ft (Homebrew)
 #
 # 2. Linux
-#    - x86_64: downloads ft-linux-x64-1.0.7.zip
-#    - ARM64 (aarch64): downloads ft-linux-arm64-1.0.7.zip
-#    - ARM32 (armv7l): downloads ft-linux-arm-1.0.7.zip
-#    - RISCV64: downloads ft-linux-riscv64-1.0.7.zip
+#    - x86_64: downloads ft-linux-x64-1.0.8.zip
+#    - ARM64 (aarch64): downloads ft-linux-arm64-1.0.8.zip
+#    - ARM32 (armv7l): downloads ft-linux-arm-1.0.8.zip
+#    - RISCV64: downloads ft-linux-riscv64-1.0.8.zip
 #    - Install directory: $HOME/.local/bin
 #    - Installation method: bash install.sh (this script)
 #
@@ -26,7 +26,7 @@
 #    - Git for Windows (MINGW64_NT)
 #    - MSYS2 (MSYS_NT)
 #    - Cygwin (CYGWIN)
-#    - x86_64: downloads ft-windows-x64-1.0.7.zip
+#    - x86_64: downloads ft-windows-x64-1.0.8.zip
 #    - Install directory: $HOME/AppData/Local/bin
 #    - Installation methods:
 #      * Automatic: bash install.sh (this script)
@@ -51,9 +51,32 @@
 set -e
 
 # Configuration
-VERSION="1.0.7"
+#
+# Installation supports version selection in three ways:
+# 1. Pass as command-line argument:
+#    bash install.sh 1.0.8
+# 2. Set as environment variable:
+#    VERSION=1.0.8 bash install.sh
+# 3. Pass argument via piped remote execution:
+#    curl -fsSL https://raw.githubusercontent.com/huanguan1978/ft/main/install.sh | bash -s -- 1.0.8
+
+DEFAULT_VERSION="1.0.8"
 REPO="huanguan1978/ft"
 RELEASE_PAGE="https://github.com/huanguan1978/ft/releases"
+
+# Show usage help if requested
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage: $0 [version]"
+    echo "Example: $0 1.0.8"
+    exit 0
+fi
+
+# Determine Version: 1) Positional argument $1, 2) Environment variable $VERSION, 3) DEFAULT_VERSION
+VERSION="${1:-$VERSION}"
+VERSION="${VERSION:-$DEFAULT_VERSION}"
+
+# Strip leading 'v' if present (e.g. v1.0.8 -> 1.0.8)
+VERSION="${VERSION#v}"
 
 # Detect OS and architecture
 UNAME_OS=$(uname -s)
