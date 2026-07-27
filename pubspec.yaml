@@ -1,11 +1,12 @@
 name: filetools
 description: 'FileTools: cross-platform glob & streams.'
-version: 1.0.7
+version: 1.0.8
 
 repository: https://github.com/huanguan1978/ft
 
 funding:
   - https://github.com/sponsors/huanguan1978
+  - https://buymeacoffee.com/huanguan1978
 
 environment:
   sdk: '>=3.4.0 <4.0.0'  
@@ -43,7 +44,7 @@ dependencies:
   tar: ^2.0.0
   args: ^2.7.0
   mime: ^2.0.0
-  cli_util: ^0.4.2
+  cli_util: ^0.5.2
   cli_config: ^0.2.0
 
 dev_dependencies:

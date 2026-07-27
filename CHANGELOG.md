@@ -1,3 +1,14 @@
+## 1.0.8
+
+- Support synchronizing file last modified time for `mirror`, `archive`, and `unarchive` subcommands.
+  - Enabled by default for `archive` and `unarchive`.
+  - Disabled by default for `mirror` (metadata preservation depends on OS native API; use `ft mirror --keepmtime` to enable manually).
+- Add optional `root` parameter to `isMatchGlob` and propagate context from `PathMeta`.
+
+Note: For absolute paths, unless using `root` for relative matching (e.g., pattern `**.DS_Store` with `root: '/path/to/project'`),  
+`pattern` and `excludes` must start with an absolute path (e.g., `/**/.DS_Store`)
+
+
 ## 1.0.7
 
 - Add `parseMimeTypes` and `resolvePath` utility functions.

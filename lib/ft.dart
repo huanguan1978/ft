@@ -23,6 +23,8 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_config/cli_config.dart';
 
+import 'src/version.g.dart' show packageVersion;
+
 part 'src/ft_constant.dart';
 part 'src/ft_textmime.dart';
 part 'src/ft_exception.dart';

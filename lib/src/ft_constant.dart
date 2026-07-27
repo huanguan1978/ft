@@ -54,7 +54,7 @@ bool get isUnixLike => (Platform.isLinux || Platform.isMacOS);
 bool get isDesktop => (isWindows || isUnixLike);
 
 /// The version string for 'ft'.
-final ftVer = '1.0.7';
+final ftVer = packageVersion;
 
 /// The operating system name string for 'ft'.
 final ftOs = Platform.operatingSystem;
@@ -187,6 +187,7 @@ my_scripts:
 
 
 # a cron-like time-based job scheduler, run commands, and scripts.
+# this job configuration is applicable to the task scheduler manager of the companion GUI app FileShows. Online doc: https://webpath.iche2.com/fssdoc/en/crontab/
 job:
   # available actions: run | pause | stop | delete
   action: stop
