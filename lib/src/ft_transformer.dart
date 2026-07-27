@@ -15,6 +15,8 @@ class EntityStreamTransformer
   final List<String>? mimeIncludes;
   final List<String>? mimeExcludes;
 
+  final String? root;
+
   late bool useMimeIncludes = false;
   late bool useMimeExcludes = false;
 
@@ -23,6 +25,7 @@ class EntityStreamTransformer
     this._scFilted, {
     this.cancelOnError = false,
     this.excludes,
+    this.root,
     this.mimeOverrides,
     this.mimeIncludes,
     this.mimeExcludes,
@@ -147,7 +150,7 @@ class EntityStreamTransformer
   (bool, String) _isInExcludes(String path) {
     if (excludes case List<String> patterns when patterns.isNotEmpty) {
       for (var pattern in patterns) {
-        if (isMatchGlob(pattern, path)) return (true, pattern);
+        if (isMatchGlob(pattern, path, root: root)) return (true, pattern);
       }
     }
     return (false, '');

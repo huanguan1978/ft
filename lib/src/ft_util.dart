@@ -139,7 +139,10 @@ List<String> parseCliArgs(String command, {bool isRawString = true}) {
 /// matched = isMatchGlob(r'**.dart', './example/ft_example.dart'));
 /// print(matched); // true, // startwith r'**' is _patternCanMatchRelative
 /// ```
-bool isMatchGlob(String pattern, String path) => Glob(pattern).matches(path);
+bool isMatchGlob(String pattern, String path, {String? root}) {
+  final context = root != null ? p.Context(current: root) : null;
+  return Glob(pattern, context: context).matches(path);
+}
 
 /// Joins the given path parts into a single path using the current platform's
 /// [separator]. Example:

@@ -116,6 +116,7 @@ class PathMeta {
               scFilted,
               cancelOnError: cancelOnError,
               excludes: excludes,
+              root: path,
               mimeOverrides: mimeOverrides,
               mimeIncludes: mimeIncludes,
               mimeExcludes: mimeExcludes,
