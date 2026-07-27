@@ -223,21 +223,31 @@ bool isDirWritable(Directory directory, {bool? isDirExist}) {
 ///
 /// Compares size, modification time, and CRC64 checksums. <br/>
 /// Creates [dstFile] (and its parent directories) if it doesn't exist.
-File fileMirror(File srcFile, File dstFile) {
+File fileMirror(File srcFile, File dstFile, [bool keepMtime = false]) {
+  final srcModified = srcFile.lastModifiedSync();
+
   final newPath = dstFile.path;
   if (!dstFile.existsSync()) {
     dstFile.createSync(recursive: true);
-    return srcFile.copySync(newPath);
+    final copied = srcFile.copySync(newPath);
+    if (keepMtime) copied.setLastModifiedSync(srcModified);
+    return copied;
   }
 
   if ((srcFile.lengthSync() != dstFile.lengthSync()) ||
-      (srcFile.lastModifiedSync() != dstFile.lastModifiedSync())) {
-    return srcFile.copySync(newPath);
+      (srcModified != dstFile.lastModifiedSync())) {
+    final copied = srcFile.copySync(newPath);
+    if (keepMtime) copied.setLastModifiedSync(srcModified);
+    return copied;
   }
 
   final srcCrc64 = getCrc64(srcFile.readAsBytesSync());
   final dstCrc64 = getCrc64(dstFile.readAsBytesSync());
-  if (srcCrc64 != dstCrc64) return srcFile.copySync(newPath);
+  if (srcCrc64 != dstCrc64) {
+    final copied = srcFile.copySync(newPath);
+    if (keepMtime) copied.setLastModifiedSync(srcModified);
+    return copied;
+  }
 
   return dstFile;
 }

@@ -420,6 +420,12 @@ class MirrorCommand extends Command {
       defaultsTo: '0',
       help: 'tail source injection to target.',
     );
+    argParser.addFlag(
+      'keepmtime',
+      negatable: false,
+      defaultsTo: false,
+      help: 'keep original modification time (mtime).',
+    );
   }
 
   @override
@@ -446,6 +452,7 @@ class MirrorCommand extends Command {
     late final String target;
     late final bool relative;
     late final int tail;
+    late final bool keepmtime;
     try {
       _setFtRunner(ftRun, globalResults, logger);
 
@@ -457,6 +464,8 @@ class MirrorCommand extends Command {
           getInt('$name.tail', ftRun.ftConfig, aRes: argResults, defaultTo: 0);
       relative = getFlag('$name.relative', ftRun.ftConfig,
           aRes: argResults, defaultTo: true);
+      keepmtime = getFlag('$name.keepmtime', ftRun.ftConfig,
+          aRes: argResults, defaultTo: false);
     } on UsageException catch (_, __) {
       rethrow;
     } catch (e) {
@@ -493,10 +502,14 @@ class MirrorCommand extends Command {
     final srcPath = action.path;
     String dstPath = target;
     if (tail > 0) dstPath = p.join(target, pathtail(srcPath, tail));
-    if (v) logger.trace('i, relative:$relative, tail:$tail, target:$dstPath');
+    if (v) {
+      logger.trace(
+        'i, keepmtime:$keepmtime, relative:$relative, tail:$tail, target:$dstPath',
+      );
+    }
 
     toDir = Directory(dstPath);
-    action.mirror(toDir, relative);
+    action.mirror(toDir, relative, keepmtime);
   }
 
   // cls_last_line

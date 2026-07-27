@@ -124,6 +124,7 @@ void unArchive(
           (out) async {
             await tarEntry.contents.pipe(out.openWrite()).then(
               (_) {
+                out.setLastModifiedSync(tarEntry.modified);
                 final line = Formatter(out, out.statSync(), '', name,
                     shows: fields, ok: true);
                 logger?.stdout(line.toString());
@@ -304,6 +305,7 @@ class TarHelper {
           name: relativePath,
           size: file.lengthSync(),
           mode: int.parse('644', radix: 8),
+          modified: file.lastModifiedSync(),
         ),
         file.openRead(),
       ),
@@ -376,6 +378,7 @@ class TarHelper {
         _log(options.logBuffer, 'Extracting file: ${tarEntry.name}');
         try {
           await tarEntry.contents.pipe(targetFile.openWrite());
+          targetFile.setLastModifiedSync(tarEntry.modified);
           options.onFileExtracted?.call(targetFile);
         } catch (e) {
           _log(options.logBuffer, 'Pipe failed for ${tarEntry.name}: $e');

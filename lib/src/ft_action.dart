@@ -261,7 +261,8 @@ mixin BasicAction on PathMeta {
   /// final toDir = Direcotry(expandTilde('~/Downloads/ft/'))..createSync(recursive: true);
   /// action.mirror(toDir);
   /// ```
-  Stream<Es> mirror(Directory toDir, [bool useRelPath = true]) {
+  Stream<Es> mirror(Directory toDir,
+      [bool useRelPath = true, bool keepMtime = false]) {
     final action = PathAction.mirror.name, chk = 'validator';
     argErr ??= validator();
     if (argErr!.isNotEmpty) throw ArgumentError.value(argErr, action, chk);
@@ -294,7 +295,7 @@ mixin BasicAction on PathMeta {
         var file = File(entity.path);
         var newFile = File(newPath);
         try {
-          file = fileMirror(file, newFile);
+          file = fileMirror(file, newFile, keepMtime);
           ok = true;
         } catch (e, s) {
           logger.stderr('e, $action, data, filesync, $oldPath -> $newPath');
