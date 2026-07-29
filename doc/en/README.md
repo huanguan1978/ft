@@ -219,6 +219,11 @@ Run "ft help" to see global options.
 ```
 
 #### Quick Experience:
+
+Want to see `ft:filetools` in action on a real project?  
+Check out my case study: **Deploy with ease – how I semi‑automated multi‑language documentation deployments with ft:filetools**
+[Deploy with ease – ft:filetools case study](https://huanguan1978.itch.io/ft-filetools/devlog/1607010/-deploy-with-ease-how-i-semi-automated-my-multi-language-doc-deployments-with-ftfiletools).
+
 Incrementally mirror documents within a user's temporary desktop workspace to allow tracing back documents from recent days.
 
 1.  Generate Configuration File:
@@ -309,3 +314,12 @@ void actionList2() {
   // ufn_lastline
 }
 ```
+
+## 💖 Support the Project
+If you find this tool helpful and would like to see it continue to improve and evolve, please consider showing your support.
+
+*   ⭐ **Star the Repo**: This is a great encouragement. Your stars help more people discover this tool and gain more recognition in the community.
+*   ☕ **Support the Developer (Global)**: Any contribution, however small, is a huge affirmation of my work. You can support via [GitHub Sponsors](https://github.com/sponsors/huanguan1978) or [Buy Me a Coffee](https://buymeacoffee.com/huanguan1978).
+*   🐼 **Support via Ifdian (Mainland China)**: Users in China can also show support via [Ifdian](https://ifdian.net/a/huangaun1978).
+
+*Thank you for your support, which is a vital boost that keeps me focused on the project's continuous iteration; because of you, more people can benefit from this tool much sooner.*
