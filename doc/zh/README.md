@@ -322,6 +322,6 @@ void actionList2() {
 
 *   ⭐ **点亮星标**：这是对我的莫大鼓励。您的星标能让更多人发现这个工具，也让项目在社区中获得更多认可。
 *   ☕ **支持开发者 (全球)**：任何数额的支持都是对我持续投入工作的肯定。您可以通过 [GitHub Sponsors](https://github.com/sponsors/huanguan1978) 或 [Buy Me a Coffee](https://buymeacoffee.com/huanguan1978) 为我助力。
-*   🐼 **国内的朋友**：也可以通过 [爱发电](https://ifdian.net/a/huangaun1978) 进行支持。
+*   🐼 **国内的朋友**：也可以通过 [爱发电](https://ifdian.net/a/huanguan1978) 进行支持。
 
 *感谢您的支持，这是让我保持专注、持续迭代项目的巨大助力；因为有你，更多人得以更快地获得这份工具带来的便利。*
