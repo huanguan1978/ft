@@ -223,7 +223,9 @@ Run "ft help" to see global options.
 
 #### 快速体验：
 
-想快速了解 `ft:filetools` 在真实项目中的落地方式？查看我的实战案例：[轻松布署：我如何用自己开发的命令行工具 ft:filetools 实现多语言用户帮助文档半自动化发布工作流](https://zhuanlan.zhihu.com/p/2065737461154816553)。
+想快速了解 `ft:filetools` 在真实项目中的落地方式？查看我的实战案例：
+*   [轻松部署：我如何用自己开发的命令行工具 ft:filetools 实现多语言用户帮助文档半自动化发布工作流](https://zhuanlan.zhihu.com/p/2065737461154816553)
+*   [告别“盲改”：我如何使用自制 CLI 工具 ft:filetools 实现所见即所得的批量文本修正](https://zhuanlan.zhihu.com/p/2066834060287251351)
 
 把用户临时桌面工作区内的文档进行增量镜像，以便回溯近几天的文档。  
 

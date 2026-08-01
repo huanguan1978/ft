@@ -221,8 +221,11 @@ Run "ft help" to see global options.
 #### Quick Experience:
 
 Want to see `ft:filetools` in action on a real project?  
-Check out my case study: **Deploy with ease – how I semi‑automated multi‑language documentation deployments with ft:filetools**
-[Deploy with ease – ft:filetools case study](https://huanguan1978.itch.io/ft-filetools/devlog/1607010/-deploy-with-ease-how-i-semi-automated-my-multi-language-doc-deployments-with-ftfiletools).
+Check out my case studies:
+*   **Deploy with ease – how I semi‑automated multi‑language documentation deployments with ft:filetools**  
+    [Deploy with ease – ft:filetools case study](https://huanguan1978.itch.io/ft-filetools/devlog/1607010/-deploy-with-ease-how-i-semi-automated-my-multi-language-doc-deployments-with-ftfiletools)
+*   **No More "Blind Editing": How I Used My Own CLI Tool, ft:filetools, for WYSIWYG Batch Text Correction**  
+    [No More "Blind Editing" – ft:filetools case study](https://huanguan1978.itch.io/ft-filetools/devlog/1611344/no-more-blind-editing-how-i-used-my-own-cli-tool-ftfiletools-for-wysiwyg-batch-text-correction)
 
 Incrementally mirror documents within a user's temporary desktop workspace to allow tracing back documents from recent days.
 
